@@ -1,0 +1,3214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>IMAGE MAP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+/* ══════ CSS変数 ══════ */
+:root {
+  --bg: #f7f5f2;
+  --sur: #fff;
+  --bdr: #e0dbd0;
+  --txt: #2a2520;
+  --muted: #8a8078;
+  --acc: #5b8a7a;
+  --accl: #eaf3ef;
+  --shd: 0 4px 20px rgba(42,37,32,.10);
+
+  /* ログイン画面専用 */
+  --login-grad: linear-gradient(145deg, #3d6b5e 0%, #5b8a7a 50%, #7aab99 100%);
+}
+
+/* ══════ リセット ══════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 3px; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px; /* 既存より1px大きく */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ══════ ログイン画面 ══════ */
+#login-ov {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background: var(--login-grad);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--sur);
+  border-radius: 24px;
+  padding: 32px 26px;
+  width: min(400px, 100%);
+  box-shadow: 0 20px 60px rgba(42,37,32,.20);
+  animation: fadeUp .3s ease;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.login-logo-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+.login-logo-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--acc);
+  letter-spacing: .08em;
+}
+.login-logo-catch {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+  letter-spacing: .04em;
+}
+
+/* Googleログインボタン */
+.btn-google {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--bdr);
+  background: var(--sur);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  margin-bottom: 18px;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-google:active { background: var(--accl); border-color: var(--acc); }
+
+/* 区切り線 */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.login-divider-line { flex: 1; height: 1px; background: var(--bdr); }
+.login-divider-txt { font-size: 12px; color: var(--muted); }
+
+/* タブ切り替え */
+.login-tabs {
+  display: flex;
+  border: 1px solid var(--bdr);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.login-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.login-tab.active { background: var(--acc); color: #fff; }
+
+/* フォーム要素 */
+.login-field { margin-bottom: 10px; }
+.login-label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 500; }
+.login-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--bdr);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--txt);
+  outline: none;
+  transition: border .15s;
+}
+.login-input:focus { border-color: var(--acc); }
+
+/* ボタン共通 */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: var(--acc);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 6px;
+  transition: opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary:active { opacity: .85; }
+
+.btn-text {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--acc);
+  margin-top: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-text.muted { color: var(--muted); }
+
+/* エラー・メッセージ */
+.login-err { color: #c0392b; font-size: 12px; margin-top: 6px; text-align: center; min-height: 18px; }
+
+/* プライバシーポリシーリンク */
+.login-footer {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.login-footer a { color: var(--acc); text-decoration: none; }
+
+/* ══════ 表示名登録オーバーレイ ══════ */
+#name-ov {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.name-card {
+  background: var(--sur);
+  border-radius: 24px;
+  padding: 32px 26px;
+  width: min(400px, 100%);
+  box-shadow: var(--shd);
+  animation: fadeUp .3s ease;
+  text-align: center;
+}
+.name-card-icon { font-size: 40px; margin-bottom: 10px; }
+.name-card-title { font-size: 20px; font-weight: 700; color: var(--txt); margin-bottom: 6px; }
+.name-card-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+
+/* ══════ 承認申請オーバーレイ ══════ */
+#apply-ov {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.apply-card {
+  background: var(--sur);
+  border-radius: 24px;
+  padding: 32px 26px;
+  width: min(400px, 100%);
+  box-shadow: var(--shd);
+  animation: fadeUp .3s ease;
+  text-align: center;
+}
+
+/* ══════ ヘッダー ══════ */
+#hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--sur);
+  border-bottom: 1px solid var(--bdr);
+  flex-shrink: 0;
+  z-index: 50;
+  flex-wrap: wrap;
+  min-height: 48px;
+}
+#app-title {
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--txt);
+  width: 145px;
+  outline: none;
+  cursor: text;
+  font-family: inherit;
+}
+#app-title:focus { background: var(--accl); border-radius: 6px; padding: 0 4px; }
+.sep { width: 1px; height: 18px; background: var(--bdr); flex-shrink: 0; }
+
+.hbtn {
+  padding: 5px 10px;
+  border-radius: 18px;
+  border: 1px solid var(--bdr);
+  background: var(--sur);
+  color: var(--txt);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.hbtn:active { background: var(--accl); border-color: var(--acc); color: var(--acc); }
+.hbtn.pri { background: var(--acc); color: #fff; border-color: var(--acc); }
+.hbtn.pri:active { opacity: .85; }
+.hbtn.danger { color: #c0392b; border-color: #e8d0cf; }
+
+/* トグル */
+.togs { display: flex; gap: 3px; align-items: center; flex-wrap: wrap; }
+.tog {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border-radius: 14px;
+  border: 1px solid var(--bdr);
+  background: var(--sur);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+  transition: all .15s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.tog.on { background: var(--accl); border-color: var(--acc); color: var(--acc); font-weight: 500; }
+.tog-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .6; }
+
+/* ══════ ページタブ ══════ */
+#page-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 5px 10px;
+  background: var(--sur);
+  border-bottom: 1px solid var(--bdr);
+  flex-shrink: 0;
+}
+.ptab {
+  padding: 4px 13px;
+  border-radius: 14px;
+  border: 1px solid var(--bdr);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ptab.active { background: var(--acc); color: #fff; border-color: var(--acc); }
+.ptab:active:not(.active) { background: var(--accl); border-color: var(--acc); color: var(--acc); }
+#add-page-btn {
+  padding: 4px 11px;
+  border-radius: 14px;
+  border: 1px dashed var(--bdr);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+#add-page-btn:active { border-color: var(--acc); color: var(--acc); }
+
+/* ══════ メインエリア ══════ */
+#main { display: flex; flex: 1; overflow: hidden; height: 0; }
+
+/* サイドバー */
+#sb {
+  width: 260px;
+  min-width: 260px;
+  background: var(--sur);
+  border-right: 1px solid var(--bdr);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width .25s, min-width .25s;
+}
+#sb.closed { width: 0; min-width: 0; }
+#sb-in { width: 260px; display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden; }
+#sb-tabs { display: flex; border-bottom: 1px solid var(--bdr); flex-shrink: 0; overflow-x: auto; }
+.sbtab {
+  flex: none;
+  padding: 8px 9px;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.sbtab.active { color: var(--acc); border-bottom-color: var(--acc); font-weight: 500; }
+#sb-body { flex: 1; overflow-y: scroll; padding: 8px; -webkit-overflow-scrolling: touch; min-height: 0; }
+
+/* 人物カード */
+.pc {
+  border: 1px solid var(--bdr);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all .15s;
+  border-left: 3px solid #ccc;
+  -webkit-tap-highlight-color: transparent;
+}
+.pc:active { border-color: var(--acc); background: var(--accl); }
+.pc-name { font-size: 14px; font-weight: 500; }
+.pc-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.pc-tags { display: flex; gap: 3px; margin-top: 3px; flex-wrap: wrap; }
+.chip { padding: 2px 6px; border-radius: 8px; font-size: 11px; background: #eee; color: #666; }
+
+/* リマインダー */
+.rem-item {
+  border: 1px solid #ffe082;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  background: #fffde7;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.rem-item.overdue { border-color: #ffb3b3; background: #fff0f0; }
+.rem-item-name { font-size: 13px; font-weight: 500; }
+.rem-item-dt { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* 誕生日 */
+.bmon { margin-bottom: 10px; }
+.bmon-t { font-size: 13px; font-weight: 700; color: var(--acc); padding: 2px 0; border-bottom: 1px solid var(--bdr); margin-bottom: 4px; }
+.brow { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 13px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.brow.today { background: #fffbe6; border-radius: 6px; padding: 3px 6px; font-weight: 700; color: #a07010; }
+.bday-d { width: 28px; color: var(--muted); font-size: 12px; }
+
+/* 統計 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+.stat-card { background: var(--bg); border: 1px solid var(--bdr); border-radius: 9px; padding: 8px 10px; text-align: center; }
+.stat-num { font-size: 17px; font-weight: 700; color: var(--acc); }
+.stat-lbl { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.stat-full { grid-column: 1 / -1; }
+
+/* フィルター */
+.age-bar { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 3px; }
+.age-chip {
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  border: 1px solid var(--bdr);
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--sur);
+  -webkit-tap-highlight-color: transparent;
+}
+.age-chip.sel { background: var(--accl); border-color: var(--acc); color: var(--acc); font-weight: 500; }
+.fsec { margin-bottom: 10px; }
+.flbl { font-size: 12px; color: var(--muted); margin-bottom: 3px; display: block; font-weight: 500; }
+.finp, .fsel {
+  width: 100%;
+  padding: 6px 9px;
+  border: 1px solid var(--bdr);
+  border-radius: 9px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--txt);
+  outline: none;
+}
+.finp:focus, .fsel:focus { border-color: var(--acc); }
+.pchips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.pchip {
+  padding: 3px 7px;
+  border-radius: 9px;
+  font-size: 11px;
+  border: 1px solid var(--bdr);
+  cursor: pointer;
+  background: var(--sur);
+  color: var(--muted);
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pchip.sel { background: var(--accl); border-color: var(--acc); color: var(--acc); font-weight: 500; }
+.rchips { display: flex; gap: 3px; margin-top: 3px; flex-wrap: wrap; }
+.rchip {
+  padding: 4px 11px;
+  border-radius: 10px;
+  font-size: 12px;
+  border: 1px solid var(--bdr);
+  cursor: pointer;
+  background: var(--sur);
+  color: var(--muted);
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.rchip.sel { background: var(--accl); border-color: var(--acc); color: var(--acc); font-weight: 500; }
+.name-list {
+  background: var(--bg);
+  border: 1px solid var(--bdr);
+  border-radius: 9px;
+  padding: 7px;
+  margin-top: 5px;
+  font-size: 13px;
+  line-height: 1.8;
+  cursor: text;
+  min-height: 50px;
+  max-height: 180px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* ══════ マップエリア ══════ */
+#map-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  cursor: grab;
+  touch-action: none;
+}
+#map-wrap:active { cursor: grabbing; }
+#msv { width: 100%; height: 100%; }
+
+/* マップオーバーレイ */
+#map-overlays-container {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+}
+#map-overlays-container > div { pointer-events: auto; }
+#map-milestone {
+  background: rgba(255,255,255,.95);
+  border: 1.5px solid var(--acc);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--txt);
+  display: none;
+}
+#map-theme, #map-memo {
+  background: rgba(255,255,255,.92);
+  border: 1px solid var(--bdr);
+  border-radius: 10px;
+  padding: 7px 11px;
+  font-size: 13px;
+  color: var(--txt);
+  display: none;
+}
+#map-milestone.show, #map-theme.show, #map-memo.show { display: block; }
+
+/* ノードポップアップ */
+#pop {
+  position: absolute;
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: 16px;
+  box-shadow: var(--shd);
+  width: min(290px, 92vw);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn .15s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.93) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+#pop-hd { padding: 11px 11px 7px; border-bottom: 1px solid var(--bdr); flex-shrink: 0; }
+.pop-nr { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.pop-nm { font-size: 16px; font-weight: 700; }
+.pop-ag { font-size: 12px; color: var(--muted); }
+.pop-an { font-size: 14px; margin-top: 2px; font-weight: 500; color: #7050a0; }
+.pop-grp { font-size: 12px; color: #6070b0; margin-top: 1px; }
+.pop-tc { display: inline-block; padding: 2px 8px; border-radius: 9px; font-size: 11px; margin-top: 3px; }
+#pop-bd {
+  padding: 7px 11px 5px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  flex: 1;
+  min-height: 0;
+}
+.pr { display: flex; gap: 4px; margin-bottom: 5px; font-size: 12px; align-items: flex-start; }
+.pk { color: var(--muted); width: 78px; flex-shrink: 0; padding-top: 1px; font-size: 11px; }
+.pv { color: var(--txt); flex: 1; word-break: break-all; }
+.ppcs { display: flex; flex-wrap: wrap; gap: 2px; }
+.ppc { padding: 2px 6px; border-radius: 7px; font-size: 11px; background: var(--accl); color: var(--acc); }
+#pop-ft {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  border-top: 1px solid var(--bdr);
+  display: flex;
+  gap: 4px;
+  background: var(--sur);
+  border-radius: 0 0 16px 16px;
+}
+#pop-ft .hbtn { flex: 1; text-align: center; padding: 6px 0; font-size: 12px; }
+#pop-cl {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  border: none;
+  background: transparent;
+  font-size: 17px;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 2px 6px;
+  line-height: 1;
+  z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ズームボタン */
+#zbtn { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 3px; }
+#zbtn button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--bdr);
+  border-radius: 9px;
+  background: var(--sur);
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: var(--shd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+#zbtn button:active { background: var(--accl); }
+
+/* アラートバー */
+#alert-bar {
+  display: none;
+  padding: 6px 13px;
+  background: #fff8e1;
+  border-bottom: 1px solid #ffe082;
+  font-size: 13px;
+  color: #7a5c00;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+#alert-bar.show { display: flex; align-items: center; gap: 7px; }
+
+/* ══════ オーバーレイ・モーダル ══════ */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(42,37,32,.4);
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 16px 10px;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--sur);
+  border-radius: 18px;
+  padding: 20px;
+  width: min(520px, 100%);
+  margin: auto;
+  box-shadow: var(--shd);
+}
+.modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.mfull { grid-column: 1 / -1; }
+.mlbl { font-size: 12px; color: var(--muted); margin-bottom: 3px; display: block; font-weight: 500; }
+.minp, .msel, .mtxt {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--bdr);
+  border-radius: 9px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--txt);
+  outline: none;
+  transition: border .15s;
+}
+.minp:focus, .msel:focus, .mtxt:focus { border-color: var(--acc); }
+.mtxt { resize: vertical; min-height: 56px; }
+.msec { margin-bottom: 9px; }
+.mact { display: flex; gap: 7px; justify-content: flex-end; margin-top: 12px; }
+
+/* カラーピッカー */
+.cpick { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.csw { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all .15s; flex-shrink: 0; }
+.csw.sel { border-color: #222; transform: scale(1.2); }
+
+/* プロダクト選択 */
+.psel { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.psec {
+  padding: 3px 8px;
+  border-radius: 9px;
+  font-size: 12px;
+  border: 1px solid var(--bdr);
+  cursor: pointer;
+  background: var(--sur);
+  color: var(--muted);
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.psec.sel { background: var(--accl); border-color: var(--acc); color: var(--acc); font-weight: 500; }
+
+.anprev { display: none; font-size: 13px; color: #7050a0; min-height: 17px; margin-bottom: 6px; font-weight: 500; }
+.rem-row { display: flex; gap: 4px; margin-top: 5px; align-items: center; flex-wrap: wrap; }
+.set-sec { margin-bottom: 14px; }
+.set-t { font-size: 13px; font-weight: 700; color: var(--acc); margin-bottom: 6px; padding-bottom: 3px; border-bottom: 1px solid var(--bdr); }
+.nrow { display: flex; gap: 5px; align-items: center; margin-bottom: 3px; }
+.nrow input { flex: 1; padding: 5px 8px; border: 1px solid var(--bdr); border-radius: 8px; font-size: 13px; font-family: inherit; background: var(--bg); color: var(--txt); outline: none; }
+.nrow input:focus { border-color: var(--acc); }
+.nprev { padding: 2px 7px; border-radius: 8px; font-size: 11px; background: var(--accl); color: var(--acc); white-space: nowrap; }
+.pnamesgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+/* 確認ダイアログ */
+.confirm-ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.confirm-box {
+  background: var(--sur);
+  border-radius: 18px;
+  padding: 24px 20px;
+  width: min(300px, 90vw);
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.confirm-box h4 { font-size: 16px; font-weight: 700; margin-bottom: 9px; color: var(--txt); }
+.confirm-box p { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; min-height: 17px; }
+.confirm-bts { display: flex; gap: 9px; }
+.confirm-bts button { flex: 1; padding: 12px; border-radius: 11px; border: 1px solid var(--bdr); font-family: inherit; font-size: 14px; cursor: pointer; font-weight: 500; -webkit-tap-highlight-color: transparent; }
+.cb-cancel { background: var(--bg); color: var(--txt); }
+.cb-ok { background: #e53935; color: #fff; border-color: #e53935; }
+
+/* 通知 */
+.notif {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: #fff;
+  border: 1px solid var(--bdr);
+  border-radius: 13px;
+  padding: 11px 14px;
+  box-shadow: var(--shd);
+  z-index: 9999;
+  font-size: 13px;
+  max-width: 240px;
+  animation: slideIn .3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* PV期待チップ */
+.expect-chips { display: flex; gap: 4px; margin-top: 4px; }
+.echip { padding: 4px 11px; border-radius: 9px; font-size: 12px; border: 1px solid var(--bdr); cursor: pointer; background: var(--sur); color: var(--muted); transition: all .15s; }
+.echip.selA { background: #e8f5e9; border-color: #43a047; color: #1b5e20; }
+.echip.selB { background: #fff3e0; border-color: #fb8c00; color: #e65100; }
+.echip.selC { background: #fce4ec; border-color: #e91e63; color: #880e4f; }
+
+/* マイルストーンポップアップ */
+#milestone-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  background: rgba(42,37,32,.45);
+}
+#milestone-popup-box {
+  background: var(--sur);
+  border-radius: 22px;
+  padding: 30px 26px;
+  width: min(320px, 88vw);
+  box-shadow: 0 8px 40px rgba(0,0,0,.22);
+  position: relative;
+  animation: popIn .18s ease;
+}
+#milestone-popup-close {
+  position: absolute;
+  top: 13px;
+  right: 15px;
+  border: none;
+  background: transparent;
+  font-size: 21px;
+  cursor: pointer;
+  color: var(--muted);
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 権限バッジ */
+#readonly-badge {
+  display: none;
+  background: #e8d0cf;
+  color: #c0392b;
+  border-radius: 10px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* 印刷 */
+@media print {
+  #hdr, #page-tabs, #sb, #zbtn, #pop, .overlay, #alert-bar { display: none !important; }
+  #main { flex: 1; }
+  #map-wrap { width: 100%; height: 90vh; }
+  body { overflow: visible; }
+}
+</style>
+
+<!-- Firebase SDK (compat版: iOS Safari対応) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- ══════ ログインオーバーレイ ══════ -->
+<div id="login-ov">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🗺</div>
+      <div class="login-logo-title">IMAGE MAP</div>
+      <div class="login-logo-catch">人脈を地図に。ビジネスを加速。</div>
+    </div>
+
+    <!-- Googleログイン -->
+    <button class="btn-google" id="btn-google-login" onclick="loginWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Googleでログイン
+    </button>
+
+    <!-- 区切り -->
+    <div class="login-divider">
+      <div class="login-divider-line"></div>
+      <span class="login-divider-txt">または</span>
+      <div class="login-divider-line"></div>
+    </div>
+
+    <!-- タブ切り替え -->
+    <div class="login-tabs">
+      <button id="tab-login" class="login-tab active" onclick="switchLoginTab('login')">ログイン</button>
+      <button id="tab-signup" class="login-tab" onclick="switchLoginTab('signup')">新規登録</button>
+    </div>
+
+    <!-- メールアドレス -->
+    <div class="login-field">
+      <span class="login-label">メールアドレス</span>
+      <input id="login-email" class="login-input" type="email" placeholder="example@email.com">
+    </div>
+
+    <!-- パスワード -->
+    <div class="login-field">
+      <span class="login-label">パスワード</span>
+      <input id="login-pass" class="login-input" type="password" placeholder="6文字以上">
+    </div>
+
+    <!-- パスワード確認（新規登録時のみ） -->
+    <div id="signup-confirm-wrap" style="display:none" class="login-field">
+      <span class="login-label">パスワード（確認）</span>
+      <input id="login-pass-confirm" class="login-input" type="password" placeholder="もう一度入力">
+    </div>
+
+    <!-- 実行ボタン -->
+    <button id="login-submit-btn" class="btn-primary" onclick="handleLoginSubmit()">ログインする</button>
+    <div id="login-err" class="login-err"></div>
+
+    <!-- パスワードを忘れた -->
+    <button id="forgot-pass-btn" class="btn-text" onclick="resetPassword()">パスワードを忘れた方はこちら</button>
+
+    <!-- オフラインで使う -->
+    <button class="btn-text muted" onclick="useOffline()">オフラインで使う（同期なし）</button>
+
+    <!-- フッター -->
+    <div class="login-footer">
+      <a href="#" onclick="showPrivacyPolicy()">プライバシーポリシー</a>
+      　・　
+      <a href="#" onclick="showTerms()">利用規約</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 表示名登録オーバーレイ ══════ -->
+<div id="name-ov" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div class="name-card">
+    <div class="name-card-icon">👋</div>
+    <div class="name-card-title">はじめまして！</div>
+    <div class="name-card-desc">共有機能で使われる表示名を入力してください。<br>後から変更できます。</div>
+    <div style="text-align:left;margin-bottom:16px">
+      <span class="login-label">表示名（例：山田 夕里子）</span>
+      <input id="reg-name" class="login-input" type="text" placeholder="名前を入力">
+    </div>
+    <button class="btn-primary" onclick="saveDisplayName()">はじめる</button>
+    <div id="name-err" class="login-err"></div>
+  </div>
+</div>
+
+<!-- ══════ 承認申請オーバーレイ ══════ -->
+<div id="apply-ov" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div class="apply-card">
+    <div class="name-card-icon">🤝</div>
+    <div class="name-card-title" id="apply-title">マップへの参加申請</div>
+    <div class="name-card-desc" id="apply-desc"></div>
+    <div id="apply-status-msg" style="padding:12px;border-radius:10px;margin-bottom:16px;font-size:14px;display:none"></div>
+    <button id="apply-btn" class="btn-primary" onclick="submitApply()" style="margin-bottom:8px">参加を申請する</button>
+    <button class="btn-text muted" onclick="skipApply()">自分のマップを開く</button>
+  </div>
+</div>
+
+<!-- ══════ メイン画面 ══════ -->
+<div id="alert-bar" onclick="showTab('reminders')">
+  <span>⏰</span><span id="alert-msg"></span>
+</div>
+
+<div id="hdr">
+  <input id="app-title" value="🗺 IMAGE MAP" oninput="syncPageName(this.value)">
+  <span id="readonly-badge">👁 閲覧のみ</span>
+  <div class="sep"></div>
+  <button class="hbtn" onclick="openAdd()">＋ 追加</button>
+  <button class="hbtn" onclick="openSettings()">⚙ 設定</button>
+  <button class="hbtn" id="undo-btn" onclick="undoLastAction()" style="display:none">↩ 元に戻す</button>
+  <button class="hbtn" onclick="openStats()">📊 統計</button>
+  <button class="hbtn" onclick="exportCSV()" ontouchend="event.preventDefault();exportCSV()">CSV</button>
+  <div class="sep"></div>
+  <div class="togs">
+    <div class="tog" id="tog-animal" onclick="togD('animal')"><div class="tog-dot"></div>キャラ</div>
+    <div class="tog" id="tog-rel" onclick="togD('rel')"><div class="tog-dot"></div>関係性</div>
+    <div class="tog" id="tog-pv" onclick="togD('pv')"><div class="tog-dot"></div><span id="tog-pv-lbl">現状売上</span></div>
+    <div class="tog" id="tog-mpv" onclick="togD('mpv')"><div class="tog-dot"></div><span id="tog-mpv-lbl">見込み売上</span></div>
+    <div class="tog" id="tog-goal" onclick="togD('goal')"><div class="tog-dot"></div>GOAL</div>
+    <div class="tog" onclick="openMilestonePopup()" ontouchend="event.preventDefault();openMilestonePopup()" style="touch-action:manipulation;cursor:pointer"><div class="tog-dot"></div>カウントダウン</div>
+    <div class="tog" id="tog-theme" onclick="togD('theme')"><div class="tog-dot"></div>テーマ</div>
+    <div class="tog" id="tog-mapMemo" onclick="togD('mapMemo')"><div class="tog-dot"></div>メモ</div>
+    <div class="tog" id="tog-last" onclick="togD('last')"><div class="tog-dot"></div>前回</div>
+    <div class="tog" id="tog-next" onclick="togD('next')"><div class="tog-dot"></div>次アポ</div>
+  </div>
+  <button class="hbtn" onclick="togSB()">☰</button>
+  <button class="hbtn" id="btn-share" onclick="openShareModal()" style="display:none">👥 共有</button>
+  <button class="hbtn" id="btn-logout" onclick="doLogout()" style="display:none;font-size:11px;color:var(--muted)">ログアウト</button>
+  <span id="user-badge" style="display:none;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px"></span>
+</div>
+
+<div id="page-tabs">
+  <!-- 自分のマップ行 -->
+  <div id="page-tabs-row1" style="display:flex;align-items:center;gap:3px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px">
+    <span id="my-map-label" style="font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap;flex-shrink:0">自分のマップ</span>
+    <div id="page-tabs-list" style="display:inline-flex;gap:3px;align-items:center"></div>
+    <button id="add-page-btn" onclick="addPage()" ontouchend="event.preventDefault();addPage()" style="touch-action:manipulation;flex-shrink:0">＋ マップ追加</button>
+    <button onclick="nodePosOverride={};renderMap()" style="padding:4px 9px;border-radius:14px;border:1px solid var(--bdr);font-size:12px;cursor:pointer;color:var(--muted);background:var(--sur);flex-shrink:0">↺ 整列</button>
+    <button id="del-page-btn" onclick="deleteCurrentPage()" ontouchend="event.preventDefault();deleteCurrentPage()" style="padding:4px 11px;border-radius:14px;border:1px solid #ffcccc;font-size:12px;cursor:pointer;color:#c0392b;background:#fff5f5;flex-shrink:0">🗑 マップ削除</button>
+    <button id="copy-page-btn" onclick="copyCurrentPage()" ontouchend="event.preventDefault();copyCurrentPage()" style="padding:4px 11px;border-radius:14px;border:1px dashed var(--bdr);font-size:12px;cursor:pointer;color:var(--muted);background:transparent;flex-shrink:0">📋 コピー</button>
+  </div>
+  <!-- 共有マップ行 -->
+  <div id="page-tabs-row2" style="display:none;align-items:center;gap:3px;margin-top:4px;padding:5px 9px;background:var(--accl);border-radius:10px;border:1px solid var(--acc);overflow-x:auto">
+    <span style="font-size:10px;color:var(--acc);font-weight:700;white-space:nowrap;flex-shrink:0">🔗 共有マップ</span>
+    <div id="page-tabs-shared-list" style="display:inline-flex;gap:3px;align-items:center"></div>
+  </div>
+</div>
+
+<div id="main">
+  <!-- サイドバー -->
+  <div id="sb">
+    <div id="sb-in">
+      <div id="sb-tabs">
+        <div class="sbtab active" onclick="showTab('list')">一覧</div>
+        <div class="sbtab" onclick="showTab('reminders')">リマインダー</div>
+        <div class="sbtab" onclick="showTab('filter')">絞込</div>
+        <div class="sbtab" onclick="showTab('bday')">誕生日</div>
+        <div class="sbtab" onclick="showTab('pv')">売上集計</div>
+        <div class="sbtab" onclick="showTab('remind')">提案</div>
+      </div>
+      <div id="sb-body">
+        <div id="tab-list"><div id="people-list"></div></div>
+        <div id="tab-reminders" style="display:none">
+          <div class="fsec" style="margin-bottom:6px"><span class="flbl">⏰ リマインダー一覧</span></div>
+          <div id="reminder-list"></div>
+        </div>
+        <div id="tab-filter" style="display:none">
+          <div class="fsec"><span class="flbl">名前検索（本人＋グループ）</span><input class="finp" id="fn-search" placeholder="名前…" oninput="applyFilter()"></div>
+          <div class="fsec" style="margin-bottom:6px">
+            <span class="flbl">コンタクトサイン</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+              <button class="rchip" data-cf="m1" onclick="setContactFilter(this,'m1')">🔴 A: 7日以内</button>
+              <button class="rchip" data-cf="m2" onclick="setContactFilter(this,'m2')">🔴 B: 14日以内</button>
+            </div>
+          </div>
+          <div class="fsec"><span class="flbl">種別</span><select class="fsel" id="ft-type" onchange="applyFilter()"><option value="">すべて</option><option value="ABO">ABO</option><option value="PC">PC</option><option value="prospect">プロスペクト</option></select></div>
+          <div class="fsec"><span class="flbl">関係性</span><div class="rchips"><div class="rchip sel" data-rel="" onclick="selRel(this)">全</div><div class="rchip" data-rel="A" onclick="selRel(this)">A</div><div class="rchip" data-rel="B" onclick="selRel(this)">B</div><div class="rchip" data-rel="C" onclick="selRel(this)">C</div></div></div>
+          <div class="fsec"><span class="flbl" id="prod-filter-lbl">プロダクツ/SOP</span><div class="pchips" id="filter-prods"></div></div>
+          <div class="fsec"><span class="flbl">年代</span><div class="age-bar" id="age-filter"></div></div>
+          <div class="fsec"><span class="flbl">性別</span><select class="fsel" id="ft-gender" onchange="applyFilter()"><option value="">すべて</option><option value="女性">女性</option><option value="男性">男性</option></select></div>
+          <button class="hbtn" style="width:100%;margin-top:4px" onclick="clearFilter()">リセット</button>
+        </div>
+        <div id="tab-bday" style="display:none"><div id="bday-sec"></div></div>
+        <div id="tab-pv" style="display:none"><div id="pv-stats"></div></div>
+        <div id="tab-remind" style="display:none">
+          <div class="fsec"><span class="flbl">⏰ 何ヶ月以上会っていない人を提案</span><div style="display:flex;gap:5px;align-items:center;margin-top:3px"><input class="finp" id="remind-months" type="number" min="1" max="24" value="3" style="width:65px" onchange="renderContactRemind()"><span style="font-size:12px;color:var(--muted)">ヶ月以上</span></div></div>
+          <div id="contact-remind-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- マップエリア -->
+  <div id="map-wrap">
+    <svg id="msv"></svg>
+    <div id="map-overlays-container">
+      <div id="map-milestone" onclick="openMilestonePopup()" ontouchend="event.preventDefault();openMilestonePopup()" style="cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0);user-select:none;-webkit-user-select:none"></div>
+      <div id="map-theme">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:2px">📌 今月のテーマ</div>
+        <textarea id="theme-input" style="width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--txt);outline:none;resize:none;min-height:36px" placeholder="テーマを入力…" oninput="updMapOverlays()" rows="2"></textarea>
+      </div>
+      <div id="map-memo">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:2px">📝 メモ</div>
+        <textarea id="memo-input" style="width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--txt);outline:none;resize:none;min-height:36px" placeholder="メモを入力…" oninput="updMapOverlays()" rows="4"></textarea>
+      </div>
+    </div>
+
+    <!-- ノードポップアップ -->
+    <div id="pop">
+      <button id="pop-cl" onclick="closePop()">×</button>
+      <div id="pop-hd">
+        <div class="pop-nr"><span class="pop-nm" id="pp-nm"></span><span class="pop-ag" id="pp-ag"></span></div>
+        <div class="pop-an" id="pp-an"></div>
+        <div class="pop-grp" id="pp-grp"></div>
+        <span class="pop-tc" id="pp-tc"></span>
+        <span class="pop-tc" style="margin-left:3px;background:#f0ece8;color:#888" id="pp-rel"></span>
+      </div>
+      <div id="pop-bd">
+        <div class="pr"><span class="pk">性別</span><span class="pv" id="pp-gnd"></span></div>
+        <div class="pr"><span class="pk">職業</span><span class="pv" id="pp-job"></span></div>
+        <div class="pr"><span class="pk">年収</span><span class="pv" id="pp-income"></span></div>
+        <div class="pr"><span class="pk">休日</span><span class="pv" id="pp-holiday"></span></div>
+        <div class="pr"><span class="pk">居住地</span><span class="pv" id="pp-city"></span></div>
+        <div class="pr"><span class="pk">出身地</span><span class="pv" id="pp-from"></span></div>
+        <div class="pr"><span class="pk">居住形態</span><span class="pv" id="pp-liv"></span></div>
+        <div class="pr"><span class="pk">家族構成</span><span class="pv" id="pp-fam"></span></div>
+        <div class="pr"><span class="pk">出会い</span><span class="pv" id="pp-met"></span></div>
+        <div class="pr"><span class="pk">趣味/興味</span><span class="pv" id="pp-hob"></span></div>
+        <div class="pr"><span class="pk">共通点</span><span class="pv" id="pp-com"></span></div>
+        <div class="pr"><span class="pk">プロダクツ</span><div class="pv ppcs" id="pp-prods"></div></div>
+        <div class="pr"><span class="pk" id="pp-gpv-lbl">目標売上</span><span class="pv" id="pp-gpv"></span></div>
+        <div class="pr"><span class="pk" id="pp-pv-lbl">現状売上</span><span class="pv" id="pp-pv"></span></div>
+        <div class="pr"><span class="pk" id="pp-tpv-lbl">見込み売上</span><span class="pv" id="pp-tpv"></span></div>
+        <div class="pr"><span class="pk">GOAL</span><span class="pv" id="pp-goal" style="font-weight:700"></span></div>
+        <div class="pr"><span class="pk">前回会った日</span><span class="pv" id="pp-last"></span></div>
+        <div class="pr"><span class="pk">次回アポ</span><span class="pv" id="pp-next"></span></div>
+        <div class="pr"><span class="pk">メモ</span><span class="pv" id="pp-memo"></span></div>
+        <div class="pr" id="pp-rem-row" style="display:none"><span class="pk">リマインダー</span><span class="pv" id="pp-rem"></span></div>
+      </div>
+      <div id="pop-ft">
+        <button class="hbtn" onclick="editCur()" ontouchend="event.preventDefault();editCur()">編集</button>
+        <button class="hbtn danger" onclick="delCur()" ontouchend="event.preventDefault();delCur()">削除</button>
+        <button class="hbtn" onclick="copyPersonToPage()" ontouchend="event.preventDefault();copyPersonToPage()">📋コピー</button>
+      </div>
+    </div>
+
+    <div id="zbtn">
+      <button onclick="zm(1.2)">＋</button>
+      <button onclick="zm(1/1.2)">－</button>
+      <button onclick="resetV()" style="font-size:12px">⌂</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ マイルストーンポップアップ ══════ -->
+<div id="milestone-popup" onclick="if(event.target===this)closeMilestonePopup()">
+  <div id="milestone-popup-box">
+    <button id="milestone-popup-close" onclick="closeMilestonePopup()">×</button>
+    <div id="milestone-popup-content"></div>
+  </div>
+</div>
+
+<!-- ══════ 人物追加・編集モーダル ══════ -->
+<div class="overlay" id="add-ov">
+<div class="modal">
+  <h3 id="modal-t">人を追加</h3>
+  <input type="hidden" id="eid">
+  <div class="mgrid">
+
+    <!-- 名前 -->
+    <div class="msec mfull"><span class="mlbl">名前 *</span><input class="minp" id="f-name" placeholder="山田 太郎"></div>
+
+    <!-- 生年月日 + 年齢 -->
+    <div class="msec mfull">
+      <span class="mlbl">生年月日</span>
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+        <select class="msel" id="f-bday-y" style="width:80px" onchange="calcAge()">
+          <option value="">年</option>
+        </select>
+        <select class="msel" id="f-bday-m" style="width:60px" onchange="calcAge()">
+          <option value="">月</option>
+        </select>
+        <select class="msel" id="f-bday-d" style="width:60px" onchange="calcAge()">
+          <option value="">日</option>
+        </select>
+        <input class="minp" id="f-age" type="text" inputmode="numeric" placeholder="年齢" style="width:60px" oninput="onAgeInput()">
+        <span style="font-size:12px;color:var(--muted)">歳</span>
+      </div>
+    </div>
+
+    <!-- キャラ -->
+    <div class="msec mfull">
+      <span class="mlbl">キャラ</span>
+      <select class="msel" id="f-animal-sel">
+        <option value="">未設定</option>
+        <option value="狼">🐺 狼</option>
+        <option value="こじか">🦌 こじか</option>
+        <option value="猿">🐒 猿</option>
+        <option value="チーター">🐆 チーター</option>
+        <option value="黒ひょう">🐈‍⬛ 黒ひょう</option>
+        <option value="ライオン">🦁 ライオン</option>
+        <option value="虎">🐯 虎</option>
+        <option value="たぬき">🦝 たぬき</option>
+        <option value="子守熊">🐨 子守熊</option>
+        <option value="ゾウ">🐘 ゾウ</option>
+        <option value="ひつじ">🐏 ひつじ</option>
+        <option value="ペガサス">🦄 ペガサス</option>
+        <option value="ゴリラ">🦍 ゴリラ</option>
+      </select>
+    </div>
+
+    <!-- 性別・種別 -->
+    <div class="msec">
+      <span class="mlbl">性別</span>
+      <select class="msel" id="f-gender">
+        <option value="">未設定</option>
+        <option value="女性">女性</option>
+        <option value="男性">男性</option>
+      </select>
+    </div>
+    <div class="msec">
+      <span class="mlbl">種別 *</span>
+      <select class="msel" id="f-type">
+        <option value="prospect">見込み（点線）</option>
+        <option value="ABO">メンバー（実線）</option>
+        <option value="PC">VIPメンバー（実線）</option>
+      </select>
+    </div>
+
+    <!-- ノードカラー -->
+    <div class="msec mfull"><span class="mlbl">ノードカラー</span><div class="cpick" id="cpick"></div></div>
+
+    <!-- 上位メンバー -->
+    <div class="msec mfull"><span class="mlbl">上位メンバー</span><select class="msel" id="f-par" onchange="autoSetColor()"></select></div>
+
+    <!-- 関係性・職業 -->
+    <div class="msec">
+      <span class="mlbl">関係性</span>
+      <select class="msel" id="f-rel">
+        <option value="">未設定</option>
+        <option value="S">S</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+    </div>
+    <div class="msec"><span class="mlbl">職業</span><input class="minp" id="f-job" placeholder="会社員"></div>
+
+    <!-- 年収・休日 -->
+    <div class="msec"><span class="mlbl">年収</span><input class="minp" id="f-income" placeholder="500万円"></div>
+    <div class="msec"><span class="mlbl">休日</span><input class="minp" id="f-holiday" placeholder="土日"></div>
+
+    <!-- 居住地・出身地 -->
+    <div class="msec"><span class="mlbl">居住地</span><input class="minp" id="f-city" placeholder="東京都"></div>
+    <div class="msec"><span class="mlbl">出身地</span><input class="minp" id="f-from" placeholder="大阪府"></div>
+
+    <!-- 居住形態 -->
+    <div class="msec mfull">
+      <span class="mlbl">居住形態</span>
+      <select class="msel" id="f-liv">
+        <option value="">未設定</option>
+        <option value="実家暮らし">実家暮らし</option>
+        <option value="一人暮らし">一人暮らし</option>
+        <option value="賃貸（家族あり）">賃貸（家族あり）</option>
+        <option value="持ち家（戸建て）">持ち家（戸建て）</option>
+        <option value="持ち家（マンション）">持ち家（マンション）</option>
+        <option value="社宅／寮">社宅／寮</option>
+      </select>
+    </div>
+
+    <!-- 家族構成・出会い -->
+    <div class="msec mfull"><span class="mlbl">家族構成</span><input class="minp" id="f-fam" placeholder="夫・子2人"></div>
+    <div class="msec mfull"><span class="mlbl">出会い</span><input class="minp" id="f-met" placeholder="○○のイベントで知り合い"></div>
+
+    <!-- 趣味・共通点 -->
+    <div class="msec mfull"><span class="mlbl">趣味/興味</span><input class="minp" id="f-hob" placeholder="ヨガ・料理・旅行"></div>
+    <div class="msec mfull"><span class="mlbl">共通点</span><input class="minp" id="f-com" placeholder="同じ年代の子どもがいる"></div>
+
+    <!-- 愛用商品 -->
+    <div class="msec mfull"><span class="mlbl" id="prod-modal-lbl">愛用商品の種類</span><div class="psel" id="prod-sel"></div></div>
+
+    <!-- 目標売上・現状売上 -->
+    <div class="msec">
+      <span class="mlbl" id="f-gpv-lbl-disp">目標売上</span>
+      <input class="minp" id="f-gpv" type="text" inputmode="numeric" placeholder="100,000" oninput="fmtPV(this)">
+    </div>
+    <div class="msec">
+      <span class="mlbl" id="f-pv-lbl-disp">現状売上</span>
+      <input class="minp" id="f-pv" type="text" inputmode="numeric" placeholder="5,000" oninput="fmtPV(this)">
+    </div>
+
+    <!-- 見込み売上 + A/B/C -->
+    <div class="msec mfull">
+      <span class="mlbl" id="f-tpv-lbl-disp">見込み売上</span>
+      <input class="minp" id="f-tpv" type="text" inputmode="numeric" placeholder="10,000" oninput="fmtPV(this);updExpectResult()">
+      <div class="expect-chips" style="margin-top:6px">
+        <div class="echip" id="ech-a" onclick="setExpect('A')">A<br><span style="font-size:10px">80%</span></div>
+        <div class="echip" id="ech-b" onclick="setExpect('B')">B<br><span style="font-size:10px">50%</span></div>
+        <div class="echip" id="ech-c" onclick="setExpect('C')">C<br><span style="font-size:10px">10%</span></div>
+      </div>
+      <div id="expect-result" style="font-size:11px;color:var(--muted);margin-top:4px;min-height:14px"></div>
+    </div>
+
+    <!-- 前回会った日 -->
+    <div class="msec mfull"><span class="mlbl">前回会った日</span><input class="minp" id="f-last" type="date"></div>
+
+    <!-- 次回アポ日付＋内容 -->
+    <div class="msec mfull">
+      <span class="mlbl">次回アポ</span>
+      <input class="minp" id="f-next" type="date" style="margin-bottom:5px">
+      <input class="minp" id="f-next-note" placeholder="2回目訪問→商品説明">
+    </div>
+
+    <!-- メモ -->
+    <div class="msec mfull"><span class="mlbl">メモ</span><textarea class="mtxt" id="f-memo" rows="2" placeholder="自由メモ"></textarea></div>
+
+    <!-- リマインダー -->
+    <div class="msec mfull">
+      <span class="mlbl">⏰ リマインダー</span>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <input class="minp" id="f-rem-date" type="date" style="flex:2;min-width:130px">
+        <select class="msel" id="f-rem-hour" style="width:68px"></select>
+        <span style="font-size:13px;color:var(--muted)">:</span>
+        <select class="msel" id="f-rem-min" style="width:68px"></select>
+      </div>
+    </div>
+
+  </div>
+  <div class="mact">
+    <button class="hbtn" onclick="closeAdd()">キャンセル</button>
+    <button class="hbtn pri" onclick="savePerson()">保存</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════ 設定モーダル ══════ -->
+<div class="overlay" id="set-ov">
+<div class="modal">
+  <h3>⚙ 設定</h3>
+  <div class="set-sec">
+    <div class="set-t">センター設定</div>
+    <div class="mgrid">
+      <div class="msec"><span class="mlbl">センター名</span><input class="minp" id="set-cname"></div>
+      <div class="msec"><span class="mlbl">センターカラー</span><div class="cpick" id="cen-cpick"></div></div>
+      <div class="msec mfull"><span class="mlbl">センター目標売上（グループ全体）</span><input class="minp" id="set-center-goal" type="text" inputmode="numeric" placeholder="1,000,000" oninput="fmtPV(this);updSetGoalPreview()"></div>
+      <div class="msec"><span class="mlbl">自己売上</span><input class="minp" id="set-self-pv" type="text" inputmode="numeric" placeholder="50,000" oninput="fmtPV(this)"></div>
+    </div>
+    <div id="set-goal-preview" style="font-size:13px;padding:7px 9px;border-radius:9px;margin-top:6px;display:none"></div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">売上名称設定</div>
+    <div class="mgrid">
+      <div class="msec"><span class="mlbl">目標売上(GOAL)の名称</span><input class="minp" id="set-gpv-lbl" placeholder="目標売上"></div>
+      <div class="msec"><span class="mlbl">現状売上の名称</span><input class="minp" id="set-pv-lbl" placeholder="現状売上"></div>
+      <div class="msec"><span class="mlbl">見込み売上の名称</span><input class="minp" id="set-tpv-lbl" placeholder="見込み売上"></div>
+      <div class="msec"><span class="mlbl">売上単位（例: 円 / $ / pt）</span><input class="minp" id="set-pv-unit" placeholder="円"></div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">種別名称設定</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px">点線/実線の区別は変わりません。名前だけ変更できます。</div>
+    <div class="mgrid">
+      <div class="msec"><span class="mlbl">種別1（点線）</span><input class="minp" id="set-type-prospect" placeholder="見込み"></div>
+      <div class="msec"><span class="mlbl">種別2（実線）</span><input class="minp" id="set-type-abo" placeholder="メンバー"></div>
+      <div class="msec"><span class="mlbl">種別3（実線）</span><input class="minp" id="set-type-pc" placeholder="VIPメンバー"></div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t" id="set-prod-lbl-title">プロダクツ/SOP ラベル（20項目）</div>
+    <div style="margin-bottom:5px"><span class="mlbl">セクション名</span><input class="minp" id="set-prod-lbl" placeholder="愛用商品の種類"></div>
+    <div class="pnamesgrid" id="prod-names"></div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">月間マイルストーン設定（左上表示）</div>
+    <div id="milestone-unit-lbl" style="font-size:12px;color:var(--muted);margin-bottom:6px">日付(0=月末)と売上目標を設定</div>
+    <div id="milestone-editor"></div>
+    <button class="hbtn" style="margin-top:5px;font-size:12px" onclick="addMilestone()">＋ 追加</button>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">コンタクトサイン設定</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">前回会った日から何日以内の人にノード🔴枠を表示します。</div>
+    <div class="mgrid">
+      <div class="msec"><span class="mlbl">🔴 A サイン（日数）</span><input class="minp" id="set-warn-m1" type="number" min="1" max="365" value="7"><div style="font-size:11px;color:var(--muted);margin-top:2px">例: 7 → 7日以内の人</div></div>
+      <div class="msec"><span class="mlbl">🔴 B サイン（日数）</span><input class="minp" id="set-warn-m2" type="number" min="1" max="365" value="14"><div style="font-size:11px;color:var(--muted);margin-top:2px">例: 14 → 14日以内の人</div></div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">マップ表示テキスト</div>
+    <div class="mgrid">
+      <div class="msec mfull"><span class="mlbl">今月のテーマ（左上に表示）</span><textarea class="mtxt" id="set-theme" rows="2" placeholder="今月のテーマを入力…" oninput="syncThemeMemo()"></textarea></div>
+      <div class="msec mfull"><span class="mlbl">自由メモ（左上に表示）</span><textarea class="mtxt" id="set-mapMemo" rows="2" placeholder="メモを入力…" oninput="syncThemeMemo()"></textarea></div>
+    </div>
+  </div>
+  <div class="set-sec">
+    <div class="set-t">売上評価レベル設定</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px">売上に達したら表示するラベルを設定（例: 150万円→21%）</div>
+    <div id="sales-levels-editor"></div>
+    <button class="hbtn" style="margin-top:5px;font-size:12px" onclick="addSalesLevel()">＋ レベル追加</button>
+  </div>
+  <div class="mact">
+    <button class="hbtn" onclick="closeSettings()">閉じる</button>
+    <button class="hbtn pri" onclick="saveSettings()">保存</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════ 統計モーダル ══════ -->
+<div class="overlay" id="stats-ov">
+<div class="modal">
+  <h3>📊 統計・グループ情報</h3>
+  <div id="stats-body"></div>
+  <div class="mact"><button class="hbtn pri" onclick="closeStats()">閉じる</button></div>
+</div>
+</div>
+
+<!-- ══════ 別マップへコピーモーダル ══════ -->
+<div class="overlay" id="copy-ov">
+<div class="modal" style="max-width:320px">
+  <h3>📋 別マップへコピー</h3>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:10px">コピー先のマップを選択してください</p>
+  <div id="copy-page-list"></div>
+  <div class="mact"><button class="hbtn" onclick="closeCopyModal()">キャンセル</button></div>
+</div>
+</div>
+
+<!-- ══════ 共有設定モーダル ══════ -->
+<div class="overlay" id="share-ov">
+<div class="modal" style="max-width:400px">
+  <h3>👥 共有設定</h3>
+  <div id="share-owner-sec">
+    <div class="msec">
+      <span class="mlbl">共有するページ</span>
+      <select class="msel" id="share-page-sel"></select>
+    </div>
+    <div class="msec">
+      <span class="mlbl">招待するメールアドレス</span>
+      <input class="minp" id="share-email" type="email" placeholder="example@email.com">
+    </div>
+    <div class="msec">
+      <span class="mlbl">権限</span>
+      <select class="msel" id="share-role">
+        <option value="editor">編集者（追加・編集・削除可）</option>
+        <option value="viewer">閲覧者（見るだけ）</option>
+      </select>
+    </div>
+    <button class="hbtn pri" onclick="inviteUser()" style="width:100%;padding:10px;margin-bottom:4px">招待する</button>
+    <div id="share-invite-msg" style="font-size:12px;text-align:center;min-height:17px;margin-bottom:8px"></div>
+    <div id="share-members-list" style="margin-top:4px"></div>
+  </div>
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px">共有リンク（LINEなどでシェアできます）</div>
+    <div style="display:flex;gap:6px">
+      <input class="minp" id="share-link-input" readonly style="flex:1;font-size:11px">
+      <button class="hbtn" onclick="copyShareLink()">コピー</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">※リンクを開いてログインした人がオーナーに承認申請できます</div>
+  </div>
+  <div class="mact"><button class="hbtn" onclick="closeShareModal()">閉じる</button></div>
+</div>
+</div>
+
+<!-- ══════ JavaScript ══════ -->
+<script>
+// ポリフィル
+window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || function(cb){ return setTimeout(cb, 16); };
+window.cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || function(id){ clearTimeout(id); };
+if (!Object.assign) { Object.assign = function(t){ for (var i=1;i<arguments.length;i++){var s=arguments[i];if(s){for(var k in s){if(s.hasOwnProperty(k))t[k]=s[k];}}}return t;}; }
+if (!Array.from) { Array.from = function(o){ var a=[]; for(var i=0;i<o.length;i++)a.push(o[i]); return a; }; }
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function(s){ var el=this; while(el&&el.nodeType===1){ if(el.matches?el.matches(s):(el.msMatchesSelector?el.msMatchesSelector(s):false))return el; el=el.parentElement||el.parentNode; } return null; };
+}
+if (!Element.prototype.matches) { Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector; }
+
+// ══════ Firebase初期化 ══════
+var firebaseConfig = {
+  apiKey: "AIzaSyC1oM5gQSNmMLBnkgV70ib43ZVxF5vgj28",
+  authDomain: "image-map-apa.firebaseapp.com",
+  projectId: "image-map-apa",
+  storageBucket: "image-map-apa.firebasestorage.app",
+  messagingSenderId: "804729550092",
+  appId: "1:804729550092:web:1236ec2fc45b1b8a848529"
+};
+firebase.initializeApp(firebaseConfig);
+var fbAuth = firebase.auth();
+var fbDb = firebase.firestore();
+fbDb.settings({ experimentalForceLongPolling: true }); // ✅ iOS Safari対応
+
+// ══════ 状態変数 ══════
+var currentUser = null;
+var currentDisplayName = '';
+var offlineMode = false;
+var currentRole = 'owner'; // owner / editor / viewer
+var currentLoginTab = 'login'; // ✅ 先頭宣言
+
+// 共有状態
+var isSharedMode = false;
+var sharedOwnerUid = null;
+var sharedPageId = null;
+var sharedOwnerName = '';
+
+// Firestoreリスナー
+var firestoreUnsubscribe = null;
+var _isSaving = false;
+
+// 互換性
+var currentSharedOwnerUid = null;
+var sharedPageIds = {};
+var sharingPageIds = {};
+var savedSharedList = [];
+
+// ══════ 認証 ══════
+
+function getTargetUid() {
+  return (isSharedMode && sharedOwnerUid) ? sharedOwnerUid : currentUser.uid;
+}
+
+function showLoginScreen() {
+  document.getElementById('login-ov').style.display = 'flex';
+}
+
+function hideLoginScreen() {
+  document.getElementById('login-ov').style.display = 'none';
+}
+
+function showApp(user) {
+  hideLoginScreen();
+  var badge = document.getElementById('user-badge');
+  if (badge) { badge.textContent = currentDisplayName || user.displayName || user.email || ''; badge.style.display = 'inline'; }
+  var logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+  var shareBtn = document.getElementById('btn-share');
+  if (shareBtn) shareBtn.style.display = 'inline-flex';
+  setTimeout(loadSharingPages, 1000);
+}
+
+function switchLoginTab(tab) {
+  currentLoginTab = tab;
+  var isLogin = tab === 'login';
+  var tabLogin = document.getElementById('tab-login');
+  var tabSignup = document.getElementById('tab-signup');
+  if (tabLogin) { tabLogin.style.background = isLogin ? 'var(--acc)' : 'transparent'; tabLogin.style.color = isLogin ? '#fff' : 'var(--muted)'; tabLogin.classList.toggle('active', isLogin); }
+  if (tabSignup) { tabSignup.style.background = !isLogin ? 'var(--acc)' : 'transparent'; tabSignup.style.color = !isLogin ? '#fff' : 'var(--muted)'; tabSignup.classList.toggle('active', !isLogin); }
+  var confirmWrap = document.getElementById('signup-confirm-wrap');
+  if (confirmWrap) confirmWrap.style.display = isLogin ? 'none' : 'block';
+  var submitBtn = document.getElementById('login-submit-btn');
+  if (submitBtn) submitBtn.textContent = isLogin ? 'ログインする' : '登録する';
+  var forgotBtn = document.getElementById('forgot-pass-btn');
+  if (forgotBtn) forgotBtn.style.display = isLogin ? 'block' : 'none';
+  setLoginErr('');
+}
+
+function handleLoginSubmit() {
+  if (currentLoginTab === 'login') loginWithEmail();
+  else signupWithEmail();
+}
+
+function loginWithEmail() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { setLoginErr('メールとパスワードを入力してください'); return; }
+  setLoginErr('');
+  fbAuth.signInWithEmailAndPassword(email, pass)
+    .catch(function(e){ setLoginErr(getAuthErrMsg(e.code)); });
+}
+
+function signupWithEmail() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  var confirm = document.getElementById('login-pass-confirm') ? document.getElementById('login-pass-confirm').value : pass;
+  if (!email || !pass) { setLoginErr('メールとパスワードを入力してください'); return; }
+  if (pass.length < 6) { setLoginErr('パスワードは6文字以上にしてください'); return; }
+  if (pass !== confirm) { setLoginErr('パスワードが一致しません'); return; }
+  setLoginErr('');
+  fbAuth.createUserWithEmailAndPassword(email, pass)
+    .catch(function(e){ setLoginErr(getAuthErrMsg(e.code)); });
+}
+
+function loginWithGoogle() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(provider)
+    .catch(function(e){ setLoginErr(getAuthErrMsg(e.code)); });
+}
+
+function doLogout() {
+  customConfirm('ログアウト', 'ログアウトしますか？', function() {
+    if (firestoreUnsubscribe) { firestoreUnsubscribe(); firestoreUnsubscribe = null; }
+    fbAuth.signOut().then(function() {
+      currentUser = null;
+      offlineMode = false;
+      var badge = document.getElementById('user-badge');
+      if (badge) badge.style.display = 'none';
+      var logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      var shareBtn = document.getElementById('btn-share');
+      if (shareBtn) shareBtn.style.display = 'none';
+      showLoginScreen();
+    });
+  });
+}
+
+function useOffline() {
+  offlineMode = true;
+  currentUser = null;
+  hideLoginScreen();
+  renderAll();
+}
+
+function setLoginErr(msg) {
+  var el = document.getElementById('login-err');
+  if (el) el.textContent = msg;
+}
+
+function resetPassword() {
+  var email = document.getElementById('login-email').value.trim();
+  if (!email) { setLoginErr('メールアドレスを入力してください'); return; }
+  fbAuth.sendPasswordResetEmail(email)
+    .then(function(){
+      var el = document.getElementById('login-err');
+      if (el) { el.style.color = 'var(--acc)'; el.textContent = 'リセットメールを送信しました'; }
+    })
+    .catch(function(e){ setLoginErr(getAuthErrMsg(e.code)); });
+}
+
+function getAuthErrMsg(code) {
+  var msgs = {
+    'auth/user-not-found': 'メールアドレスが見つかりません',
+    'auth/wrong-password': 'パスワードが違います',
+    'auth/email-already-in-use': 'このメールアドレスは登録済みです',
+    'auth/invalid-email': 'メールアドレスの形式が正しくありません',
+    'auth/weak-password': 'パスワードは6文字以上にしてください',
+    'auth/too-many-requests': 'しばらく待ってから試してください',
+    'auth/popup-closed-by-user': 'ログインがキャンセルされました'
+  };
+  return msgs[code] || 'エラーが発生しました: ' + code;
+}
+
+function saveDisplayName() {
+  var name = document.getElementById('reg-name').value.trim();
+  var errEl = document.getElementById('name-err');
+  if (!name) { errEl.textContent = '名前を入力してください'; return; }
+  if (!currentUser) { errEl.textContent = 'エラーが発生しました'; return; }
+  errEl.textContent = '';
+  fbDb.collection('users').doc(currentUser.uid).set({
+    displayName: name,
+    email: currentUser.email,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true })
+    .then(function() {
+      currentDisplayName = name;
+      document.getElementById('name-ov').style.display = 'none';
+      checkShareUrl(currentUser);
+    })
+    .catch(function(){ errEl.textContent = 'エラーが発生しました'; });
+}
+
+function checkDisplayName(user) {
+  fbDb.collection('users').doc(user.uid).get().then(function(doc) {
+    if (doc.exists && doc.data().displayName) {
+      currentDisplayName = doc.data().displayName;
+      var badge = document.getElementById('user-badge');
+      if (badge) badge.textContent = currentDisplayName;
+      checkShareUrl(user);
+    } else {
+      // 表示名未登録 → 登録画面を表示
+      var nameOv = document.getElementById('name-ov');
+      nameOv.style.display = 'flex';
+    }
+  });
+}
+
+// ══════ プライバシーポリシー・利用規約（スタブ） ══════
+function showPrivacyPolicy() { notif('プライバシーポリシーページは準備中です'); }
+function showTerms() { notif('利用規約ページは準備中です'); }
+
+// ══════ 承認申請フロー（スタブ） ══════
+function checkShareUrl(user) {
+  var params = new URLSearchParams(window.location.search);
+  var ownerUid = params.get('owner');
+  var pageId = parseInt(params.get('page'));
+  if (ownerUid && pageId && ownerUid !== user.uid) {
+    showApplyScreen(user, ownerUid, pageId);
+  } else {
+    showApp(user);
+    startFirestoreSync(user.uid);
+  }
+}
+
+function showApplyScreen(user, ownerUid, pageId) {
+  hideLoginScreen();
+  var applyOv = document.getElementById('apply-ov');
+  applyOv.style.display = 'flex';
+  var descEl = document.getElementById('apply-desc');
+  fbDb.collection('users').doc(ownerUid).get().then(function(doc) {
+    var ownerName = (doc.exists && doc.data().displayName) ? doc.data().displayName : '不明';
+    if (descEl) descEl.textContent = ownerName + 'さんのマップへの参加申請です。';
+    applyOv._ownerUid = ownerUid;
+    applyOv._pageId = pageId;
+    applyOv._ownerName = ownerName;
+  });
+}
+
+function submitApply() {
+  var applyOv = document.getElementById('apply-ov');
+  var ownerUid = applyOv._ownerUid;
+  var pageId = applyOv._pageId;
+  if (!ownerUid || !pageId || !currentUser) return;
+  var shareDocId = ownerUid + '_' + currentUser.uid + '_' + pageId;
+  fbDb.collection('image_shares').doc(shareDocId).set({
+    ownerUid: ownerUid,
+    ownerName: applyOv._ownerName || '',
+    inviteeUid: currentUser.uid,
+    inviteeEmail: currentUser.email || '',
+    inviteeName: currentDisplayName || '',
+    pageId: pageId,
+    role: 'viewer',
+    status: 'pending',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    approvedAt: null
+  }).then(function() {
+    var msgEl = document.getElementById('apply-status-msg');
+    if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#eaf3ef'; msgEl.style.color = 'var(--acc)'; msgEl.textContent = '申請しました。オーナーの承認をお待ちください。'; }
+    var btn = document.getElementById('apply-btn');
+    if (btn) btn.disabled = true;
+    watchApproval(shareDocId, ownerUid, pageId);
+  }).catch(function(e){ notif('エラー: ' + e.message); });
+}
+
+function watchApproval(shareDocId, ownerUid, pageId) {
+  var unsub = fbDb.collection('image_shares').doc(shareDocId).onSnapshot(function(doc) {
+    if (!doc.exists) return;
+    var data = doc.data();
+    if (data.status === 'approved') {
+      unsub();
+      document.getElementById('apply-ov').style.display = 'none';
+      enterSharedMode(ownerUid, pageId, data.role, data.ownerName || '');
+    } else if (data.status === 'rejected') {
+      unsub();
+      var msgEl = document.getElementById('apply-status-msg');
+      if (msgEl) { msgEl.style.background = '#fff0f0'; msgEl.style.color = '#c0392b'; msgEl.textContent = '申請が拒否されました。'; }
+    }
+  });
+}
+
+function skipApply() {
+  document.getElementById('apply-ov').style.display = 'none';
+  showApp(currentUser);
+  startFirestoreSync(currentUser.uid);
+}
+
+// ══════ 共有モード（スタブ - 次回実装） ══════
+function enterSharedMode(ownerUid, pageId, role, ownerName) {
+  isSharedMode = true;
+  sharedOwnerUid = ownerUid;
+  sharedPageId = pageId;
+  sharedOwnerName = ownerName;
+  currentRole = role;
+  applyRoleBadge();
+  showApp(currentUser);
+  startFirestoreSync(ownerUid);
+}
+
+function exitSharedMode() {
+  isSharedMode = false;
+  sharedOwnerUid = null;
+  sharedPageId = null;
+  sharedOwnerName = '';
+  currentRole = 'owner';
+  applyRoleBadge();
+  startFirestoreSync(currentUser.uid);
+}
+
+function applyRoleBadge() {
+  var badge = document.getElementById('readonly-badge');
+  if (badge) badge.style.display = (currentRole === 'viewer') ? 'inline' : 'none';
+}
+
+function _updateSharingBadge() {}
+
+// ══════ 通知 ══════
+function notif(msg) {
+  var n = document.createElement('div');
+  n.className = 'notif';
+  n.textContent = msg;
+  document.body.appendChild(n);
+  setTimeout(function(){ n.remove(); }, 2500);
+}
+
+// ══════ 確認ダイアログ ══════
+function customConfirm(title, msg, onOk) {
+  var ov = document.createElement('div');
+  ov.className = 'confirm-ov';
+  ov.innerHTML = '<div class="confirm-box"><h4>' + title + '</h4><p>' + msg + '</p><div class="confirm-bts"><button class="cb-cancel">キャンセル</button><button class="cb-ok">OK</button></div></div>';
+  document.body.appendChild(ov);
+  ov.querySelector('.cb-cancel').onclick = function(){ ov.remove(); };
+  ov.querySelector('.cb-ok').onclick = function(){ ov.remove(); onOk(); };
+}
+
+// ══════ ユーティリティ ══════
+function mkS(t) { return document.createElementNS('http://www.w3.org/2000/svg', t); }
+function pvStr(n) { return n ? n.toLocaleString('ja-JP') : '0'; }
+function pvNum(str) { var h = (str||'0').replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0)-0xFEE0); }); return parseInt(h.replace(/[,，]/g,'').replace(/[^0-9]/g,''))||0; }
+function fmtPV(inp) { var raw = (inp.value||'').replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0)-0xFEE0); }).replace(/[^0-9]/g,''); if(raw) inp.value=parseInt(raw).toLocaleString('ja-JP'); else inp.value=''; }
+function getTypeName(type) { return TYPE_NAMES[type]||type||'未設定'; }
+function getSalesLevel(pv) { var s=SALES_LEVELS.slice().sort(function(a,b){return b.minPV-a.minPV;}); for(var i=0;i<s.length;i++){if(pv>=s[i].minPV)return s[i];} return s.length?s[s.length-1]:null; }
+
+// グループPV計算
+function calcGrpPV(pid, allP, visited) {
+  if (!visited) visited = [];
+  if (visited.indexOf(String(pid)) >= 0) return 0;
+  visited.push(String(pid));
+  var p = allP.find(function(x){ return String(x.id)===String(pid); });
+  if (!p) return 0;
+  var kids = allP.filter(function(x){ return String(x.parent)===String(pid); });
+  return (p.pv||0) + kids.reduce(function(s,k){ return s+calcGrpPV(k.id,allP,visited); }, 0);
+}
+function calcGrpMPV(pid, allP, visited) {
+  if (!visited) visited = [];
+  if (visited.indexOf(String(pid)) >= 0) return 0;
+  visited.push(String(pid));
+  var p = allP.find(function(x){ return String(x.id)===String(pid); });
+  if (!p) return 0;
+  var eR = {A:0.8,B:0.5,C:0.1};
+  var mpv = p.expect ? Math.round((p.tpv||0)*(eR[p.expect]||0)) : (p.tpv||0);
+  var kids = allP.filter(function(x){ return String(x.parent)===String(pid); });
+  return mpv + kids.reduce(function(s,k){ return s+calcGrpMPV(k.id,allP,visited); }, 0);
+}
+
+// ══════ タブ・UI ══════
+function showTab(t) {
+  var tabs = ['list','reminders','filter','bday','pv','remind'];
+  tabs.forEach(function(id){ var el=document.getElementById('tab-'+id); if(el)el.style.display=(id===t?'block':'none'); });
+  document.querySelectorAll('.sbtab').forEach(function(el,i){ el.classList.toggle('active', tabs[i]===t); });
+}
+function togSB() { document.getElementById('sb').classList.toggle('closed'); setTimeout(renderMap, 300); }
+function togD(k) {
+  disp[k] = !disp[k];
+  var el = document.getElementById('tog-'+k);
+  if (el) el.classList.toggle('on', disp[k]);
+  renderMap();
+}
+function syncPageName(v) {
+  var pg = curPage();
+  if (pg) { pg.name = v; saveData(); }
+}
+function buildUI() {}
+function syncAppTitle() {
+  var el = document.getElementById('app-title');
+  if (el) el.value = '🗺 ' + (curPage().name || 'IMAGE MAP');
+}
+
+// ══════ マップ描画 ══════
+var nodePos = {};
+var edgeCache = {};
+var dragNodeId = null, dragMv = false, dragSX = 0, dragSY = 0, dragNX = 0, dragNY = 0;
+var rafId = null;
+
+function renderAll() {
+  renderMap();
+  renderList();
+  renderPageTabs();
+}
+
+function renderPageTabs() {
+  var list = document.getElementById('page-tabs-list');
+  if (!list) return;
+  list.innerHTML = '';
+  pages.forEach(function(pg) {
+    var btn = document.createElement('button');
+    btn.className = 'ptab' + (String(pg.id) === String(curPageId) ? ' active' : '');
+    btn.textContent = pg.name;
+    btn.onclick = function() { curPageId = pg.id; syncAppTitle(); renderAll(); };
+    list.appendChild(btn);
+  });
+  syncAppTitle();
+}
+
+function renderMap() {
+  var svg = document.getElementById('msv');
+  if (!svg) return;
+  var W = svg.clientWidth || 800, H = svg.clientHeight || 600;
+  svg.innerHTML = '';
+  var allVis = curPeople();
+  if (!allVis.length) { drawCenterOnly(svg, W, H); return; }
+
+  var g = mkS('g'); g.id = 'map-g';
+  g.setAttribute('transform', 'translate('+ox+','+oy+') scale('+sc+')');
+  svg.appendChild(g);
+  var cx = W/2, cy = H/2;
+  nodePos = {};
+  var pg = curPage();
+
+  // フィルタ
+  var hasFilter = flt.type||flt.rel||flt.name||flt.gender||(flt.products&&flt.products.length)||ageFilter||contactFilter;
+  var filteredIds = {};
+  if (hasFilter) {
+    getVis().forEach(function(p){ filteredIds[p.id] = true; });
+  }
+
+  // 親子関係
+  var childOf = {};
+  allVis.forEach(function(p) {
+    var par = p.parent;
+    if (par !== 'center' && (isNaN(par)||!par)) { p.parent = 'center'; par = 'center'; }
+    if (par !== 'center') {
+      var k = String(par);
+      if (!childOf[k]) childOf[k] = [];
+      childOf[k].push(p);
+    }
+  });
+  var roots = allVis.filter(function(p){ return p.parent === 'center'; });
+
+  // ノードサイズ推定
+  function estLines(p) {
+    var rows = 1;
+    var hc = (childOf[String(p.id)]||[]).length > 0;
+    if (disp.pv&&disp.mpv&&disp.goal){ rows+=4; if(p.gpv)rows+=2; }
+    else if (disp.pv&&disp.mpv){ rows+=3; if(hc)rows+=1; }
+    else if ((disp.pv||disp.mpv)&&disp.goal){ rows+=2; if(p.gpv)rows+=2; }
+    else if (disp.pv||disp.mpv){ rows+=1; if(hc)rows+=1; }
+    else if (disp.goal&&p.gpv){ rows+=2; }
+    if ((disp.pv||disp.mpv)&&SALES_LEVELS&&SALES_LEVELS.length) rows+=1;
+    if (disp.last&&p.lastMet) rows+=1;
+    if (disp.next&&p.nextApt) rows+=1;
+    return rows;
+  }
+  function estH(p){ return Math.max(26, estLines(p)*15+8); }
+  function estW(p){
+    var w=0; var s=p.name||'';
+    for(var j=0;j<s.length;j++){ w+=s[j].charCodeAt(0)>0x7F?13:7; }
+    if(disp.pv||disp.mpv) w=Math.max(w,95);
+    if(disp.pv&&disp.mpv) w=Math.max(w,105);
+    if(disp.goal&&p.gpv) w=Math.max(w,115);
+    return Math.max(w+18,46);
+  }
+  function estSz(p){ return Math.max(estH(p),estW(p)); }
+  function countLeaves(pid){
+    var kids=childOf[String(pid)]||[];
+    if(!kids.length)return 1;
+    return kids.reduce(function(s,k){ return s+countLeaves(k.id); },0);
+  }
+
+  var allSz = allVis.length ? allVis.reduce(function(m,p){ return Math.max(m,estSz(p)); },0) : 60;
+  var baseScreenR = Math.min(W,H)*0.44;
+  var minScreenRbyNode = allSz*2.8;
+  var screenR = Math.max(baseScreenR, Math.min(minScreenRbyNode, Math.min(W,H)*0.56));
+  var cumR = [0, 0.32, 0.58, 0.82, 0.95, 1.0];
+  var totalLeaves = roots.reduce(function(s,p){ return s+countLeaves(p.id); },0);
+  var n = roots.length;
+  var minR1_node = (allSz*1.05*n)/(2*Math.PI);
+  var minR1_screen = screenR*cumR[1];
+  var R1 = Math.max(allSz*0.9, minR1_node, minR1_screen);
+
+  var aStart = -Math.PI/2;
+  roots.forEach(function(p) {
+    var leaves = countLeaves(p.id);
+    var span = (2*Math.PI)*(leaves/totalLeaves);
+    var mid = aStart+span/2;
+    nodePos[p.id] = {x:cx+R1*Math.cos(mid), y:cy+R1*Math.sin(mid)};
+    placeRadial(p.id, cx, cy, aStart, aStart+span, 1, R1);
+    aStart += span;
+  });
+
+  function placeRadial(pid, px, py, aS, aE, lv, distFromCenter) {
+    var kids = childOf[String(pid)]||[];
+    if (!kids.length) return;
+    var pos = nodePos[pid]; if (!pos) return;
+    var maxKSz = kids.reduce(function(m,k){ return Math.max(m,estSz(k)); },0);
+    var totalKL = kids.reduce(function(s,k){ return s+countLeaves(k.id); },0);
+    var spanAngle = aE-aS;
+    var lvIdx = Math.min(lv, cumR.length-2);
+    var targetDist = screenR*cumR[lvIdx+1];
+    var rByCum = Math.max(0, targetDist-distFromCenter);
+    var rByNode = maxKSz*(kids.length<=1?1.0:kids.length<=3?1.05:1.1);
+    var minRBySpan = kids.length<=1 ? 0 : maxKSz/(2*Math.sin(spanAngle/(2*Math.max(kids.length-1,1))+0.001));
+    var r = Math.max(rByCum, rByNode, minRBySpan);
+    var mg = spanAngle*(kids.length>=5?0.01:0.03);
+    var effS = aS+mg, effE = aE-mg;
+    var kS = effS;
+    kids.forEach(function(k) {
+      var kL = countLeaves(k.id);
+      var kSpan = (effE-effS)*(kL/totalKL);
+      var kMid = kS+kSpan/2;
+      var newDist = Math.sqrt(Math.pow(pos.x+r*Math.cos(kMid)-cx,2)+Math.pow(pos.y+r*Math.sin(kMid)-cy,2));
+      nodePos[k.id] = {x:pos.x+r*Math.cos(kMid), y:pos.y+r*Math.sin(kMid)};
+      placeRadial(k.id, pos.x, pos.y, kS, kS+kSpan, lv+1, newDist);
+      kS += kSpan;
+    });
+  }
+
+  // ドラッグ位置オーバーライド適用
+  Object.keys(nodePosOverride).forEach(function(oid) {
+    var nid = parseInt(oid);
+    if (nodePos[nid]) nodePos[nid] = {x:nodePosOverride[oid].x, y:nodePosOverride[oid].y};
+  });
+
+  // エッジ描画
+  allVis.forEach(function(p) {
+    var from = p.parent==='center' ? {x:cx,y:cy} : nodePos[p.parent];
+    var to = nodePos[p.id]; if (!from||!to) return;
+    var c = PASTELS[p.color||0];
+    var line = mkS('line');
+    line.setAttribute('x1',from.x); line.setAttribute('y1',from.y);
+    line.setAttribute('x2',to.x);   line.setAttribute('y2',to.y);
+    var dimmedEdge = hasFilter && !filteredIds[p.id];
+    if (p.type==='prospect') {
+      line.setAttribute('stroke',c.sk); line.setAttribute('stroke-width','1.5'); line.setAttribute('stroke-dasharray','5 4');
+    } else {
+      line.setAttribute('stroke',c.sk); line.setAttribute('stroke-width','2');
+    }
+    line.setAttribute('opacity', dimmedEdge?'0.08':'0.7');
+    line.setAttribute('stroke-linecap','round');
+    line.setAttribute('data-fid', p.parent==='center'?'center':String(p.parent));
+    line.setAttribute('data-tid', String(p.id));
+    g.appendChild(line);
+  });
+
+  // ノード描画
+  allVis.forEach(function(p) {
+    var pos = nodePos[p.id];
+    if (pos) {
+      var dimmed = hasFilter && !filteredIds[p.id];
+      drawNode(g, p, pos.x, pos.y, childOf, dimmed);
+    }
+  });
+
+  drawCenter(g, cx, cy, pg);
+  buildEdgeCache();
+  initMapEvents(svg);
+}
+
+function drawCenterOnly(svg, W, H) {
+  var g = mkS('g'); g.id = 'map-g';
+  g.setAttribute('transform', 'translate('+ox+','+oy+') scale('+sc+')');
+  svg.appendChild(g);
+  drawCenter(g, W/2, H/2, curPage());
+  initMapEvents(svg);
+}
+
+function drawCenter(g, x, y, pg) {
+  var cc = CENTER_C[pg.centerCI||0]; var el = mkS('g');
+  var clines = [pg.centerName||'センター'];
+  var allP = curPeople();
+  var totPV = allP.reduce(function(s,p){ return s+(p.pv||0); },0)+(CENTER_SELF_PV||0);
+  var eRc = {A:0.8,B:0.5,C:0.1};
+  var totMPV = allP.reduce(function(s,p){ return s+(p.expect?Math.round((p.tpv||0)*(eRc[p.expect]||0)):(p.tpv||0)); },0);
+  var totComb = totPV+totMPV;
+  function cLvl(pv){ return (SALES_LEVELS&&SALES_LEVELS.length)?getSalesLevel(pv):null; }
+  if (disp.pv) { if(totPV) clines.push('現 '+pvStr(totPV)); var lv=cLvl(totPV); if(lv)clines.push(lv.label); }
+  if (disp.mpv) { if(totMPV) clines.push('見 '+pvStr(totMPV)); }
+  if (disp.pv&&disp.mpv&&totComb) clines.push('合計 '+pvStr(totComb));
+  if (disp.goal&&CENTER_GOAL) {
+    var diff = CENTER_GOAL-(disp.pv||disp.mpv?totComb:0);
+    clines.push(diff>0?'GOAL -'+pvStr(diff):'GOAL 達成');
+  }
+  var cW = Math.max(clines.reduce(function(m,l){ var w=0; for(var k=0;k<l.length;k++){var cp=l[k].charCodeAt(0);w+=(cp>0x7F)?14:8;} return Math.max(m,w); },0)+20, 76);
+  var cH = Math.max(clines.length*15+10, 44);
+  var ci = mkS('ellipse'); ci.setAttribute('cx',x); ci.setAttribute('cy',y); ci.setAttribute('rx',cW/2); ci.setAttribute('ry',cH/2); ci.setAttribute('fill',cc.bg); el.appendChild(ci);
+  var sy = y-(clines.length-1)*7.5;
+  clines.forEach(function(l,li) {
+    var t=mkS('text'); t.setAttribute('x',x); t.setAttribute('y',sy+li*15);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+    t.setAttribute('fill',cc.tx); t.setAttribute('font-size',li===0?'13':'10');
+    t.setAttribute('font-weight',li===0?'700':'400'); t.setAttribute('font-family','Noto Sans JP,sans-serif');
+    t.textContent=l; el.appendChild(t);
+  });
+  g.appendChild(el);
+}
+
+function buildEdgeCache() {
+  edgeCache = {};
+  var mg = document.getElementById('map-g'); if (!mg) return;
+  var lines = mg.querySelectorAll('line[data-fid]');
+  for (var i=0;i<lines.length;i++) {
+    var l=lines[i]; var fid=l.getAttribute('data-fid'); var tid=l.getAttribute('data-tid');
+    if (!edgeCache[fid]) edgeCache[fid]={from:[],to:[]};
+    if (!edgeCache[tid]) edgeCache[tid]={from:[],to:[]};
+    edgeCache[fid].from.push(l); edgeCache[tid].to.push(l);
+  }
+}
+
+function applyDragPos(id, nx, ny) {
+  var nodeEl = document.getElementById('node-'+id);
+  var old = nodePos[id]||{x:nx,y:ny};
+  var ddx = nx-old.x, ddy = ny-old.y;
+  if (nodeEl) {
+    var tdx = (parseFloat(nodeEl.getAttribute('data-dx'))||0)+ddx;
+    var tdy = (parseFloat(nodeEl.getAttribute('data-dy'))||0)+ddy;
+    nodeEl.setAttribute('transform','translate('+tdx+','+tdy+')');
+    nodeEl.setAttribute('data-dx',tdx); nodeEl.setAttribute('data-dy',tdy);
+  }
+  nodePos[id] = {x:nx, y:ny};
+  var ec = edgeCache[String(id)];
+  if (ec) {
+    ec.from.forEach(function(l){ l.setAttribute('x1',nx); l.setAttribute('y1',ny); });
+    ec.to.forEach(function(l){ l.setAttribute('x2',nx); l.setAttribute('y2',ny); });
+  }
+}
+
+function drawNode(g, p, x, y, childOf, dimmed) {
+  var c = PASTELS[p.color||0]; var el = mkS('g'); el.id='node-'+p.id; el.setAttribute('class','node-p'); el.style.cursor='pointer';
+  if (dimmed) el.setAttribute('opacity','0.18');
+  var dn = (p.name||'').replace(/\s/g,''); var sn = dn.length>6?dn.slice(0,6)+'…':dn;
+  var lines = [];
+  var main = (disp.animal&&p.animal&&AINFO&&AINFO[p.animal]?AINFO[p.animal].e+' ':'')+sn;
+  lines.push(main);
+  var allPn = curPeople();
+  var hasChildren = allPn.filter(function(x){ return String(x.parent)===String(p.id); }).length>0;
+  var nodeGrpPV = calcGrpPV(p.id,allPn,[]);
+  var nodeGrpMPV = calcGrpMPV(p.id,allPn,[]);
+  var grpPV2 = hasChildren ? nodeGrpPV : (p.pv||0);
+  var grpMPV2 = hasChildren ? nodeGrpMPV : (p.expect?Math.round((p.tpv||0)*({A:0.8,B:0.5,C:0.1}[p.expect]||0)):(p.tpv||0));
+  var grpComb2 = grpPV2+grpMPV2;
+  function nodeLevel(pv){ return (SALES_LEVELS&&SALES_LEVELS.length)?getSalesLevel(pv):null; }
+  var allTogOn=disp.pv&&disp.mpv&&disp.goal;
+  var pvOnly=disp.pv&&!disp.mpv&&!disp.goal;
+  var mpvOnly=disp.mpv&&!disp.pv&&!disp.goal;
+  var goalOnly=disp.goal&&!disp.pv&&!disp.mpv;
+  var pvGoal=disp.pv&&disp.goal&&!disp.mpv;
+  var mpvGoal=disp.mpv&&disp.goal&&!disp.pv;
+  var pvMpv=disp.pv&&disp.mpv&&!disp.goal;
+  if(goalOnly){
+    if(p.gpv){ lines.push('目標 '+pvStr(p.gpv)); var tgt=nodeLevel(p.gpv); if(tgt)lines.push('目標 '+tgt.label); }
+  } else if(pvOnly){
+    if(grpPV2)lines.push('現 '+pvStr(grpPV2)); var lv=nodeLevel(grpPV2); if(lv)lines.push(lv.label);
+  } else if(mpvOnly){
+    if(grpMPV2)lines.push('見 '+pvStr(grpMPV2)); var lv=nodeLevel(grpMPV2); if(lv)lines.push(lv.label);
+  } else if(pvMpv){
+    if(grpPV2)lines.push('現 '+pvStr(grpPV2));
+    if(grpMPV2)lines.push('見 '+pvStr(grpMPV2));
+    if(grpComb2)lines.push('合計 '+pvStr(grpComb2));
+    var lv=nodeLevel(grpComb2); if(lv)lines.push(lv.label);
+  } else if(pvGoal){
+    if(grpPV2)lines.push('現 '+pvStr(grpPV2)); var lv=nodeLevel(grpPV2); if(lv)lines.push(lv.label);
+    if(p.gpv){ var diff=p.gpv-grpPV2; lines.push(diff>0?'GOAL -'+pvStr(diff):'GOAL 達成'); var tgt=nodeLevel(p.gpv); if(tgt&&(!lv||tgt.label!==lv.label))lines.push('目標 '+tgt.label); }
+  } else if(mpvGoal){
+    if(grpMPV2)lines.push('見 '+pvStr(grpMPV2)); var lv=nodeLevel(grpMPV2); if(lv)lines.push(lv.label);
+    if(p.gpv){ var diff=p.gpv-grpMPV2; lines.push(diff>0?'GOAL -'+pvStr(diff):'GOAL 達成'); var tgt=nodeLevel(p.gpv); if(tgt&&(!lv||tgt.label!==lv.label))lines.push('目標 '+tgt.label); }
+  } else if(allTogOn){
+    if(grpPV2)lines.push('現 '+pvStr(grpPV2));
+    if(grpMPV2)lines.push('見 '+pvStr(grpMPV2));
+    if(grpComb2)lines.push('合計 '+pvStr(grpComb2));
+    var lv=nodeLevel(grpComb2); if(lv)lines.push(lv.label);
+    if(p.gpv){ var diff=p.gpv-grpComb2; lines.push(diff>0?'GOAL -'+pvStr(diff):'GOAL 達成'); var tgt=nodeLevel(p.gpv); if(tgt&&(!lv||tgt.label!==lv.label))lines.push('目標 '+tgt.label); }
+  }
+  if(disp.last&&p.lastMet)lines.push(p.lastMet);
+  if(disp.next&&p.nextApt)lines.push(p.nextApt.slice(0,10));
+  var lh=15, th=lines.length*lh;
+  function calcLineW(s){ var w=0; for(var ci=0;ci<s.length;ci++){var cp=s[ci].charCodeAt(0);w+=(cp>0x7F)?14:8;} return w; }
+  var nW = lines.reduce(function(m,l){ return Math.max(m,calcLineW(l)); },0)+20;
+  var nH = Math.max(th+14, 30);
+  var rx = p.type==='ABO'?nH/2:4;
+  var warnStroke = null;
+  if (contactFilter&&p.lastMet) {
+    var lm=new Date(p.lastMet); var now2=new Date();
+    var dW=Math.floor((now2-lm)/(24*60*60*1000));
+    if (contactFilter==='m1'&&dW<=contactWarnM1) warnStroke='#cc2200';
+    else if (contactFilter==='m2'&&dW<=contactWarnM2) warnStroke='#cc2200';
+  }
+  var rect=mkS('rect'); rect.setAttribute('x',x-nW/2); rect.setAttribute('y',y-nH/2); rect.setAttribute('width',nW); rect.setAttribute('height',nH); rect.setAttribute('rx',rx); rect.setAttribute('fill',c.bg); rect.setAttribute('stroke',warnStroke||c.sk); rect.setAttribute('stroke-width',warnStroke?'3':'1.5'); el.appendChild(rect);
+  if (p.type==='prospect') { var rd=mkS('rect'); rd.setAttribute('x',x-nW/2); rd.setAttribute('y',y-nH/2); rd.setAttribute('width',nW); rd.setAttribute('height',nH); rd.setAttribute('rx',rx); rd.setAttribute('fill','none'); rd.setAttribute('stroke',c.sk); rd.setAttribute('stroke-width','1.5'); rd.setAttribute('stroke-dasharray','4 3'); rd.setAttribute('opacity','0.45'); el.appendChild(rd); }
+  var sy2=y-th/2+lh/2;
+  lines.forEach(function(l,li){ var t=mkS('text'); t.setAttribute('x',x); t.setAttribute('y',sy2+li*lh); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central'); t.setAttribute('fill',c.tx); t.setAttribute('font-size','11'); t.setAttribute('font-weight','400'); t.setAttribute('font-family','Noto Sans JP,sans-serif'); t.textContent=l; el.appendChild(t); });
+  if (p.rel&&disp.rel!==false) { var rb=mkS('text'); rb.setAttribute('x',x+nW/2-5); rb.setAttribute('y',y-nH/2+7); rb.setAttribute('text-anchor','middle'); rb.setAttribute('dominant-baseline','central'); rb.setAttribute('fill',c.sk); rb.setAttribute('font-size','8'); rb.setAttribute('font-weight','700'); rb.setAttribute('font-family','Noto Sans JP,sans-serif'); rb.textContent=p.rel; el.appendChild(rb); }
+  el.dataset.nid = p.id;
+  g.appendChild(el);
+}
+
+// ══════ ノードタップ座標変換（バグ修正版）══════
+// v25のバグ：SVGのBoundingRectを使わず、map-wrapのBoundingRectだけで計算していたため、
+// サイドバー幅やヘッダー高さが考慮されずズレていた。
+// v26修正：SVGのgetBoundingClientRectを使って正確にSVG座標に変換する。
+function clientToSvg(clientX, clientY) {
+  var svg = document.getElementById('msv');
+  if (!svg) return {x:0, y:0};
+  var sr = svg.getBoundingClientRect();
+  // クライアント座標 → SVGビューポート座標
+  var svgX = clientX - sr.left;
+  var svgY = clientY - sr.top;
+  // SVGビューポート座標 → マップのローカル座標（パン・ズーム考慮）
+  var mapX = (svgX - ox) / sc;
+  var mapY = (svgY - oy) / sc;
+  return {x: mapX, y: mapY};
+}
+
+function getNodeIdFromPos(clientX, clientY) {
+  var pos = clientToSvg(clientX, clientY);
+  var mapX = pos.x, mapY = pos.y;
+  var best = null, bestD = 999;
+  Object.keys(nodePos).forEach(function(nid) {
+    var np = nodePos[nid];
+    var dx = mapX - np.x, dy = mapY - np.y;
+    var d = Math.sqrt(dx*dx + dy*dy);
+    var p = curPeople().find(function(x){ return String(x.id)===String(nid); });
+    var threshold = p ? Math.max(30, (p.name||'').length*7+20) : 30;
+    if (d < threshold && d < bestD) { bestD = d; best = parseInt(nid)||nid; }
+  });
+  return best;
+}
+
+// ══════ ポップアップ ══════
+function showPopAtNode(id, sx, sy) {
+  var p = curPeople().find(function(x){ return x.id===id; }); if (!p) return;
+  curId = id;
+  var svg = document.getElementById('msv');
+  var sr = svg.getBoundingClientRect();
+  var mw = document.getElementById('map-wrap');
+  var mr = mw.getBoundingClientRect();
+  // SVGローカル座標 → 画面上の座標
+  var screenX = sx*sc + ox + sr.left - mr.left;
+  var screenY = sy*sc + oy + sr.top - mr.top;
+  showPopAt(p, screenX, screenY);
+}
+
+function showPopAt(p, sx, sy) {
+  var pop = document.getElementById('pop');
+  pop.style.display = 'flex';
+  var mr = document.getElementById('map-wrap').getBoundingClientRect();
+  var pw = 290, ph = Math.min(560, mr.height-20);
+  var left = sx+16, top = sy-80;
+  if (left+pw > mr.width-8) left = sx-pw-16;
+  if (left < 8) left = Math.max(8, mr.width/2-pw/2);
+  if (top < 8) top = 8;
+  if (top+ph > mr.height-8) top = Math.max(8, mr.height-ph-8);
+  pop.style.left = left+'px'; pop.style.top = top+'px';
+  pop.style.maxHeight = Math.min(ph, window.innerHeight*0.82)+'px';
+  fillPop(p);
+}
+
+function fillPop(p) {
+  document.getElementById('pp-nm').textContent = p.name;
+  document.getElementById('pp-ag').textContent = p.age ? p.age+'歳' : '';
+  var anStr = (p.animal&&AINFO&&AINFO[p.animal]) ? AINFO[p.animal].e+' '+p.animal : '';
+  document.getElementById('pp-an').textContent = anStr; document.getElementById('pp-an').style.display = anStr?'':'none';
+  document.getElementById('pp-grp').textContent = '';
+  var ts = {ABO:'background:#ccffec;color:#004422',PC:'background:#ccecff;color:#003366',prospect:'background:#f5ece8;color:#906040'};
+  var tc = document.getElementById('pp-tc'); tc.style.cssText = ts[p.type]||''; tc.textContent = getTypeName(p.type);
+  document.getElementById('pp-rel').textContent = p.rel ? '関係性 '+p.rel : '';
+  document.getElementById('pp-gnd').textContent = p.gender||'—';
+  document.getElementById('pp-job').textContent = p.job||'—';
+  document.getElementById('pp-income').textContent = p.income||'—';
+  document.getElementById('pp-holiday').textContent = p.holiday||'—';
+  document.getElementById('pp-city').textContent = p.city||'—';
+  document.getElementById('pp-from').textContent = p.from||'—';
+  document.getElementById('pp-liv').textContent = p.living||'—';
+  document.getElementById('pp-fam').textContent = p.family||'—';
+  document.getElementById('pp-met').textContent = p.met||'—';
+  document.getElementById('pp-hob').textContent = p.hobby||'—';
+  document.getElementById('pp-com').textContent = p.common||'—';
+  var pe = document.getElementById('pp-prods'); pe.innerHTML='';
+  (p.products||[]).forEach(function(pr){ var ch=document.createElement('div'); ch.className='ppc'; ch.textContent=pr; pe.appendChild(ch); });
+  if (!(p.products||[]).length) pe.textContent='—';
+  document.getElementById('pp-gpv').textContent = p.gpv ? pvStr(p.gpv)+' '+(PV_UNIT||'円') : '—';
+  document.getElementById('pp-pv').textContent = p.pv ? pvStr(p.pv)+' '+(PV_UNIT||'円') : '—';
+  document.getElementById('pp-tpv').textContent = p.tpv ? pvStr(p.tpv)+' '+(PV_UNIT||'円') : '—';
+  var goalEl = document.getElementById('pp-goal');
+  if (p.gpv) { var diff=p.gpv-(p.pv||0); goalEl.style.color=diff>0?'#cc4400':'#006600'; goalEl.textContent=diff>0?('-'+pvStr(Math.abs(diff))+' '+(PV_UNIT||'円')):('達成 +'+pvStr(Math.abs(diff))+' '+(PV_UNIT||'円')); } else goalEl.textContent='—';
+  document.getElementById('pp-last').textContent = p.lastMet||'—';
+  document.getElementById('pp-next').textContent = p.nextApt||'—';
+  document.getElementById('pp-memo').textContent = p.memo||'—';
+  var rr = document.getElementById('pp-rem-row');
+  if (p.reminder) { rr.style.display='flex'; document.getElementById('pp-rem').textContent=p.reminder.replace('T',' ').slice(0,16); } else rr.style.display='none';
+}
+
+function closePop() { document.getElementById('pop').style.display='none'; curId=null; }
+
+// ══════ マップイベント ══════
+var mwEl = null, lt2 = null, pinD2 = 0;
+
+function initMapEvents(svg) {
+  // SVGクリック（ノード選択）
+  svg.onclick = function(e) {
+    if (dragMv) return;
+    var id = getNodeIdFromSvgEl(e.target) || getNodeIdFromPos(e.clientX, e.clientY);
+    if (!id) return;
+    e.stopPropagation();
+    var pos = nodePosOverride[id]||nodePos[id]||{x:0,y:0};
+    showPopAtNode(id, pos.x, pos.y);
+  };
+  // マウスドラッグ（ノード移動）
+  svg.onmousedown = function(e) {
+    var id = getNodeIdFromSvgEl(e.target)||getNodeIdFromPos(e.clientX,e.clientY); if(!id)return;
+    e.stopPropagation(); dragNodeId=id; dragMv=false;
+    dragSX=e.clientX; dragSY=e.clientY;
+    var np=nodePos[id]||{x:0,y:0}; dragNX=np.x; dragNY=np.y;
+  };
+  document.onmousemove = function(e) {
+    if (!dragNodeId) return;
+    var dx=(e.clientX-dragSX)/sc, dy=(e.clientY-dragSY)/sc;
+    if (Math.abs(dx)>4||Math.abs(dy)>4) dragMv=true;
+    if (!dragMv) return;
+    var nx=dragNX+dx, ny=dragNY+dy;
+    nodePosOverride[dragNodeId]={x:nx,y:ny};
+    if (rafId) cancelAnimationFrame(rafId);
+    var did=dragNodeId;
+    rafId=requestAnimationFrame(function(){ applyDragPos(did,nx,ny); });
+  };
+  document.onmouseup = function() {
+    if (!dragNodeId) return;
+    var moved=dragMv; dragNodeId=null; dragMv=false;
+    if (moved) renderMap();
+  };
+  // タッチ（ノードドラッグ・タップ）
+  svg.ontouchstart = function(e) {
+    if (e.touches.length!==1) return;
+    var id=getNodeIdFromSvgEl(e.target)||getNodeIdFromPos(e.touches[0].clientX,e.touches[0].clientY);
+    if (!id) return;
+    e.stopPropagation(); lt2=null;
+    dragNodeId=id; dragMv=false;
+    dragSX=e.touches[0].clientX; dragSY=e.touches[0].clientY;
+    var np=nodePos[id]||{x:0,y:0}; dragNX=np.x; dragNY=np.y;
+  };
+  svg.addEventListener('touchmove', function(e) {
+    if (!dragNodeId||e.touches.length!==1) return;
+    e.preventDefault();
+    var dx=(e.touches[0].clientX-dragSX)/sc, dy=(e.touches[0].clientY-dragSY)/sc;
+    if (Math.abs(dx)>4||Math.abs(dy)>4) dragMv=true;
+    if (!dragMv) return;
+    var nx=dragNX+dx, ny=dragNY+dy;
+    nodePosOverride[dragNodeId]={x:nx,y:ny};
+    if (rafId) cancelAnimationFrame(rafId);
+    var did=dragNodeId;
+    rafId=requestAnimationFrame(function(){ applyDragPos(did,nx,ny); });
+  }, {passive:false});
+  svg.ontouchend = function(e) {
+    if (!dragNodeId) return;
+    var moved=dragMv, tappedId=dragNodeId;
+    dragNodeId=null; dragMv=false;
+    if (moved) { renderMap(); return; }
+    e.preventDefault();
+    showPopAtNode(tappedId, (nodePosOverride[tappedId]||nodePos[tappedId]||{x:0}).x, (nodePosOverride[tappedId]||nodePos[tappedId]||{y:0}).y);
+  };
+}
+
+function getNodeIdFromSvgEl(el) {
+  var t = el;
+  while (t && t.nodeType===1) {
+    var nid = (t.dataset&&t.dataset.nid)||(t.getAttribute&&t.getAttribute('data-nid'));
+    if (nid) return parseInt(nid)||nid;
+    t = t.parentNode;
+  }
+  return null;
+}
+
+// ══════ パン・ズーム ══════
+function initPanZoom() {
+  mwEl = document.getElementById('map-wrap'); if (!mwEl) return;
+  mwEl.addEventListener('mousedown', function(e) {
+    if (e.target.closest('.node-p')||e.target.closest('#pop')||e.target.closest('.overlay')||e.target.closest('#map-theme')||e.target.closest('#map-memo')||e.target.closest('#map-milestone')) return;
+    drag=true; ds={x:e.clientX-ox, y:e.clientY-oy};
+  });
+  document.addEventListener('mousemove', function(e){ if(!drag)return; ox=e.clientX-ds.x; oy=e.clientY-ds.y; applyT(); });
+  document.addEventListener('mouseup', function(){ drag=false; });
+  mwEl.addEventListener('wheel', function(e) {
+    if (e.target.closest('#pop')||e.target.closest('.overlay')) return;
+    e.preventDefault(); zm(e.deltaY<0?1.12:0.89);
+  }, {passive:false});
+  mwEl.addEventListener('click', function(e) {
+    if (!e.target.closest('.node-p')&&!e.target.closest('#pop')&&!e.target.closest('#map-theme')&&!e.target.closest('#map-memo')) closePop();
+  });
+  mwEl.addEventListener('touchstart', function(e) {
+    if (e.target.closest('#pop')||e.target.closest('.overlay')||e.target.closest('#map-milestone')) { lt2=null; return; }
+    if (e.touches.length===1) { lt2={x:e.touches[0].clientX-ox, y:e.touches[0].clientY-oy}; }
+    else if (e.touches.length===2) { var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY; pinD2=Math.sqrt(dx*dx+dy*dy); }
+  }, {passive:true});
+  mwEl.addEventListener('touchmove', function(e) {
+    if (e.target.closest('#pop')||e.target.closest('.overlay')||e.target.closest('#map-milestone')) return;
+    if (dragNodeId) { e.preventDefault(); return; }
+    e.preventDefault();
+    if (e.touches.length===1&&lt2) { ox=e.touches[0].clientX-lt2.x; oy=e.touches[0].clientY-lt2.y; applyT(); }
+    else if (e.touches.length===2&&pinD2) { var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY; var d=Math.sqrt(dx*dx+dy*dy); zm(d/pinD2); pinD2=d; }
+  }, {passive:false});
+}
+
+function zm(f) { sc=Math.max(0.2,Math.min(4,sc*f)); applyT(); }
+function applyT() { var g=document.getElementById('map-g'); if(g)g.setAttribute('transform','translate('+ox+','+oy+') scale('+sc+')'); }
+function resetV() { sc=1; ox=0; oy=0; applyT(); }
+
+// ══════ 人物一覧 ══════
+function renderList() {
+  var el = document.getElementById('people-list'); if (!el) return;
+  el.innerHTML = '';
+  var ppl = curPeople();
+  if (!ppl.length) { el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">まだ人物が登録されていません</div>'; return; }
+  ppl.forEach(function(p) {
+    var c = PASTELS[p.color||0];
+    var div = document.createElement('div');
+    div.className = 'pc'; div.style.borderLeftColor = c.sk;
+    div.innerHTML = '<div class="pc-name">'+(p.name||'')+'</div><div class="pc-sub">'+(getTypeName(p.type)||'')+(p.rel?' ・ 関係性'+p.rel:'')+'</div>';
+    div.onclick = function(){ showPopFor(p.id, false); };
+    el.appendChild(div);
+  });
+}
+
+function showPopFor(id, fl) {
+  var p = curPeople().find(function(x){ return x.id===id; }); if (!p) return;
+  curId = id;
+  var pos = nodePos[id];
+  if (pos && !fl) { showPopAtNode(id, pos.x, pos.y); return; }
+  var mr = document.getElementById('map-wrap').getBoundingClientRect();
+  showPopAt(p, mr.width/2, mr.height/2);
+}
+
+function getVis() {
+  var ppl = curPeople();
+  return ppl.filter(function(p) {
+    if (flt.name) {
+      var n = flt.name.toLowerCase();
+      if ((p.name||'').toLowerCase().indexOf(n)<0) return false;
+    }
+    if (flt.type && p.type !== flt.type) return false;
+    if (flt.rel && p.rel !== flt.rel) return false;
+    if (flt.gender && p.gender !== flt.gender) return false;
+    if (flt.products && flt.products.length) {
+      var ok = flt.products.every(function(pr){ return (p.products||[]).indexOf(pr)>=0; });
+      if (!ok) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilter() {
+  flt.name = (document.getElementById('fn-search')||{}).value||'';
+  flt.type = (document.getElementById('ft-type')||{}).value||'';
+  flt.gender = (document.getElementById('ft-gender')||{}).value||'';
+  renderAll();
+}
+function clearFilter() {
+  flt={name:'',type:'',rel:'',products:[],gender:''};
+  ageFilter=''; contactFilter='';
+  var fnSearch=document.getElementById('fn-search'); if(fnSearch)fnSearch.value='';
+  var ftType=document.getElementById('ft-type'); if(ftType)ftType.value='';
+  var ftGender=document.getElementById('ft-gender'); if(ftGender)ftGender.value='';
+  document.querySelectorAll('.rchip').forEach(function(x){x.classList.remove('sel');});
+  var rdef=document.querySelector('.rchip[data-rel=""]'); if(rdef)rdef.classList.add('sel');
+  document.querySelectorAll('#age-filter .age-chip').forEach(function(x){x.classList.remove('sel');});
+  var adef=document.querySelector('#age-filter .age-chip[data-a=""]'); if(adef)adef.classList.add('sel');
+  document.querySelectorAll('#filter-prods .pchip').forEach(function(x){x.classList.remove('sel');});
+  renderAll();
+}
+function selRel(el) {
+  document.querySelectorAll('.rchip').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel'); flt.rel=el.dataset.rel; renderAll();
+}
+function setContactFilter(el, val) {
+  contactFilter = contactFilter===val?'':val;
+  document.querySelectorAll('[data-cf]').forEach(function(b){b.classList.remove('sel');});
+  if (contactFilter) el.classList.add('sel');
+  renderAll();
+}
+
+// ══════ その他スタブ ══════
+// ══════ 生年月日セレクト初期化 ══════
+function buildBdaySelects() {
+  var yEl = document.getElementById('f-bday-y');
+  var mEl = document.getElementById('f-bday-m');
+  var dEl = document.getElementById('f-bday-d');
+  if (!yEl || !mEl || !dEl) return;
+  var curY = new Date().getFullYear();
+  for (var y = curY; y >= 1930; y--) {
+    var o = document.createElement('option'); o.value = y; o.textContent = y+'年'; yEl.appendChild(o);
+  }
+  for (var m = 1; m <= 12; m++) {
+    var o = document.createElement('option'); o.value = m; o.textContent = m+'月'; mEl.appendChild(o);
+  }
+  for (var d = 1; d <= 31; d++) {
+    var o = document.createElement('option'); o.value = d; o.textContent = d+'日'; dEl.appendChild(o);
+  }
+}
+
+function calcAge() {
+  var y = parseInt(document.getElementById('f-bday-y').value);
+  var m = parseInt(document.getElementById('f-bday-m').value);
+  var d = parseInt(document.getElementById('f-bday-d').value);
+  if (!y || !m || !d) return;
+  var today = new Date();
+  var age = today.getFullYear() - y;
+  if (today.getMonth()+1 < m || (today.getMonth()+1 === m && today.getDate() < d)) age--;
+  document.getElementById('f-age').value = age >= 0 ? age : '';
+}
+
+function onAgeInput() {
+  // 年齢を手入力した場合は生年月日セレクトをリセット
+  document.getElementById('f-bday-y').value = '';
+  document.getElementById('f-bday-m').value = '';
+  document.getElementById('f-bday-d').value = '';
+}
+
+function getBday() {
+  var y = document.getElementById('f-bday-y').value;
+  var m = document.getElementById('f-bday-m').value;
+  var d = document.getElementById('f-bday-d').value;
+  if (y && m && d) return y + '-' + (m<10?'0':'')+m + '-' + (d<10?'0':'')+d;
+  return '';
+}
+
+function setBday(bday) {
+  var yEl = document.getElementById('f-bday-y');
+  var mEl = document.getElementById('f-bday-m');
+  var dEl = document.getElementById('f-bday-d');
+  if (!bday || !yEl) return;
+  var parts = bday.split('-');
+  if (parts.length === 3) {
+    yEl.value = parseInt(parts[0]);
+    mEl.value = parseInt(parts[1]);
+    dEl.value = parseInt(parts[2]);
+    calcAge();
+  }
+}
+
+// ══════ リマインダー時・分セレクト ══════
+function buildTimePicker() {
+  var hEl = document.getElementById('f-rem-hour');
+  var mEl = document.getElementById('f-rem-min');
+  if (!hEl || !mEl) return;
+  hEl.innerHTML = ''; mEl.innerHTML = '';
+  for (var h = 0; h < 24; h++) {
+    var o = document.createElement('option');
+    o.value = (h<10?'0':'')+h; o.textContent = (h<10?'0':'')+h+'時';
+    hEl.appendChild(o);
+  }
+  for (var mi = 0; mi < 60; mi += 5) {
+    var o = document.createElement('option');
+    o.value = (mi<10?'0':'')+mi; o.textContent = (mi<10?'0':'')+mi+'分';
+    mEl.appendChild(o);
+  }
+  hEl.value = '09'; mEl.value = '00';
+}
+
+function getReminder() {
+  var d = document.getElementById('f-rem-date').value;
+  var h = document.getElementById('f-rem-hour') ? document.getElementById('f-rem-hour').value : '09';
+  var mi = document.getElementById('f-rem-min') ? document.getElementById('f-rem-min').value : '00';
+  return d ? d + 'T' + h + ':' + mi : '';
+}
+
+function setReminder(reminderStr) {
+  if (!reminderStr) {
+    document.getElementById('f-rem-date').value = '';
+    if (document.getElementById('f-rem-hour')) document.getElementById('f-rem-hour').value = '09';
+    if (document.getElementById('f-rem-min')) document.getElementById('f-rem-min').value = '00';
+    return;
+  }
+  var parts = reminderStr.split('T');
+  document.getElementById('f-rem-date').value = parts[0]||'';
+  if (parts[1] && document.getElementById('f-rem-hour')) {
+    var timeParts = parts[1].split(':');
+    document.getElementById('f-rem-hour').value = timeParts[0]||'09';
+    // 5分単位に丸める
+    var minVal = parseInt(timeParts[1]||'0');
+    minVal = Math.round(minVal/5)*5;
+    if (minVal >= 60) minVal = 55;
+    document.getElementById('f-rem-min').value = (minVal<10?'0':'')+minVal;
+  }
+}
+
+// ══════ 期待値（A/B/C） ══════
+function setExpect(lv) {
+  expectMode = expectMode === lv ? '' : lv;
+  ['A','B','C'].forEach(function(l) {
+    var el = document.getElementById('ech-'+l.toLowerCase());
+    if (el) el.className = 'echip' + (expectMode===l?' sel'+l:'');
+  });
+  updExpectResult();
+}
+
+function updExpectResult() {
+  var tpv = pvNum(document.getElementById('f-tpv').value);
+  var el = document.getElementById('expect-result');
+  if (!el) return;
+  if (!expectMode || !tpv) { el.textContent = ''; return; }
+  var rates = {A:0.8, B:0.5, C:0.1};
+  var val = Math.round(tpv * (rates[expectMode]||0));
+  el.textContent = '期待値（'+expectMode+'：'+(rates[expectMode]*100)+'%）→ '+pvStr(val)+' '+(PV_UNIT||'円');
+}
+var _undoSnapshot = null;
+function saveUndoSnapshot() {
+  var pg = curPage();
+  _undoSnapshot = { people: JSON.parse(JSON.stringify(pg.people)), pageId: curPageId };
+  var btn = document.getElementById('undo-btn'); if (btn) btn.style.display = '';
+}
+function undoLastAction() {
+  if (!_undoSnapshot) { notif('元に戻す操作がありません'); return; }
+  var pg = pages.find(function(p){ return p.id === _undoSnapshot.pageId; });
+  if (!pg) { notif('対象ページが見つかりません'); _undoSnapshot = null; return; }
+  pg.people = _undoSnapshot.people; _undoSnapshot = null;
+  var btn = document.getElementById('undo-btn'); if (btn) btn.style.display = 'none';
+  renderAll(); saveData(); notif('元に戻しました');
+}
+
+// ══════ カラーピッカー ══════
+function buildCpick(id, isCenter) {
+  var el = document.getElementById(id); if (!el) return;
+  el.innerHTML = '';
+  var arr = isCenter ? CENTER_C : PASTELS;
+  arr.forEach(function(c, i) {
+    var sw = document.createElement('div');
+    sw.className = 'csw'; sw.style.background = c.bg; sw.dataset.i = i;
+    sw.onclick = function() { setSelC(id, i); };
+    el.appendChild(sw);
+  });
+  setSelC(id, 0);
+}
+function getSelC(id) { var s = document.querySelector('#'+id+' .csw.sel'); return s ? +s.dataset.i : 0; }
+function setSelC(id, i) { document.querySelectorAll('#'+id+' .csw').forEach(function(s){ s.classList.toggle('sel', +s.dataset.i===i); }); }
+function buildProdSel() {
+  var el = document.getElementById('prod-sel'); if (!el) return;
+  el.innerHTML = '';
+  PRODUCTS.forEach(function(p) {
+    if (!p) return;
+    var c = document.createElement('div'); c.className = 'psec'; c.textContent = p; c.dataset.p = p;
+    c.onclick = function(){ c.classList.toggle('sel'); };
+    el.appendChild(c);
+  });
+}
+function getSelP() { var nl = document.querySelectorAll('#prod-sel .psec.sel'); var r = []; for(var i=0;i<nl.length;i++)r.push(nl[i].dataset.p); return r; }
+function setSelP(prods) { document.querySelectorAll('#prod-sel .psec').forEach(function(c){ c.classList.toggle('sel', (prods||[]).indexOf(c.dataset.p)>=0); }); }
+function autoAssignColor() {
+  var people = curPeople();
+  var usedColors = people.filter(function(p){ return p.parent==='center'; }).map(function(p){ return p.color||0; });
+  var nextColor = people.filter(function(p){ return p.parent==='center'; }).length % PASTELS.length;
+  for (var i=0;i<PASTELS.length;i++) { if (usedColors.indexOf(i)<0) { nextColor=i; break; } }
+  setSelC('cpick', nextColor);
+}
+function autoSetColor() {
+  var par = document.getElementById('f-par').value;
+  if (!par) return;
+  if (par==='center') { autoAssignColor(); }
+  else { var pp = curPeople().find(function(p){ return String(p.id)===String(par); }); setSelC('cpick', pp?(pp.color||0):0); }
+}
+function buildParSel(cur) {
+  var s = document.getElementById('f-par'); if (!s) return;
+  s.innerHTML = '<option value="center">'+(curPage().centerName||'センター')+'（センター）</option>';
+  curPeople().forEach(function(p) {
+    if (String(p.id)===String(curId)) return;
+    var o = document.createElement('option'); o.value = p.id; o.textContent = p.name+(p.age?' ('+p.age+')':'');
+    s.appendChild(o);
+  });
+  s.value = (cur==='center') ? 'center' : String(cur);
+  if (!s.value || s.value!==String(cur)) s.value = 'center';
+}
+
+// ══════ 人物追加・編集 ══════
+function openAdd() {
+  curId = null;
+  document.getElementById('modal-t').textContent = '人を追加';
+  var hiddenEid = document.getElementById('eid'); if (hiddenEid) hiddenEid.value = '';
+  ['f-name','f-job','f-income','f-holiday','f-city','f-from','f-hob','f-com','f-fam','f-met','f-memo','f-next','f-next-note','f-last','f-rem-date','f-age'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  ['f-gpv','f-pv','f-tpv'].forEach(function(id){ var el=document.getElementById(id); if(el)el.value=''; });
+  document.getElementById('f-type').value = 'prospect';
+  document.getElementById('f-rel').value = '';
+  document.getElementById('f-gender').value = '';
+  document.getElementById('f-liv').value = '';
+  var anSel = document.getElementById('f-animal-sel'); if (anSel) anSel.value = '';
+  var byEl=document.getElementById('f-bday-y'); if(byEl)byEl.value='';
+  var bmEl=document.getElementById('f-bday-m'); if(bmEl)bmEl.value='';
+  var bdEl=document.getElementById('f-bday-d'); if(bdEl)bdEl.value='';
+  buildTimePicker();
+  buildParSel('center');
+  buildCpick('cpick', false);
+  autoAssignColor();
+  buildProdSel(); setSelP([]);
+  expectMode = '';
+  ['A','B','C'].forEach(function(l){ var el=document.getElementById('ech-'+l.toLowerCase()); if(el)el.className='echip'; });
+  var er=document.getElementById('expect-result'); if(er)er.textContent='';
+  document.getElementById('add-ov').classList.add('open');
+}
+
+function editCur() {
+  if (!curId) return;
+  var p = curPeople().find(function(x){ return x.id===curId; }); if (!p) return;
+  document.getElementById('modal-t').textContent = '編集: '+p.name;
+  var hiddenEid = document.getElementById('eid'); if (hiddenEid) hiddenEid.value = p.id;
+  document.getElementById('f-name').value = p.name||'';
+  document.getElementById('f-type').value = p.type||'prospect';
+  document.getElementById('f-rel').value = p.rel||'';
+  document.getElementById('f-gender').value = p.gender||'';
+  document.getElementById('f-liv').value = p.living||'';
+  var anSel = document.getElementById('f-animal-sel'); if (anSel) anSel.value = p.animal||'';
+  setBday(p.bday||'');
+  document.getElementById('f-age').value = p.age||'';
+  document.getElementById('f-job').value = p.job||'';
+  document.getElementById('f-income').value = p.income||'';
+  document.getElementById('f-holiday').value = p.holiday||'';
+  document.getElementById('f-city').value = p.city||'';
+  document.getElementById('f-from').value = p.from||'';
+  document.getElementById('f-fam').value = p.family||'';
+  document.getElementById('f-met').value = p.met||'';
+  document.getElementById('f-hob').value = p.hobby||'';
+  document.getElementById('f-com').value = p.common||'';
+  document.getElementById('f-gpv').value = p.gpv ? pvStr(p.gpv) : '';
+  document.getElementById('f-pv').value  = p.pv  ? pvStr(p.pv)  : '';
+  document.getElementById('f-tpv').value = p.tpv ? pvStr(p.tpv) : '';
+  document.getElementById('f-last').value = p.lastMet||'';
+  document.getElementById('f-next').value = p.nextApt||'';
+  document.getElementById('f-next-note').value = p.nextNote||'';
+  document.getElementById('f-memo').value = p.memo||'';
+  buildTimePicker();
+  setReminder(p.reminder||'');
+  buildCpick('cpick', false); setSelC('cpick', p.color||0);
+  buildParSel(p.parent);
+  buildProdSel(); setSelP(p.products||[]);
+  expectMode = p.expect||'';
+  ['A','B','C'].forEach(function(l){
+    var el=document.getElementById('ech-'+l.toLowerCase());
+    if(el)el.className='echip'+(expectMode===l?' sel'+l:'');
+  });
+  updExpectResult();
+  closePop();
+  document.getElementById('add-ov').classList.add('open');
+}
+
+function closeAdd() { document.getElementById('add-ov').classList.remove('open'); }
+
+function savePerson() {
+  var name = document.getElementById('f-name').value.trim();
+  if (!name) { notif('名前を入力してください'); return; }
+  saveUndoSnapshot();
+  var par = document.getElementById('f-par').value;
+  var anSel = document.getElementById('f-animal-sel');
+  var data = {
+    name: name,
+    type: document.getElementById('f-type').value,
+    rel: document.getElementById('f-rel').value,
+    gender: document.getElementById('f-gender').value,
+    animal: anSel ? anSel.value : '',
+    bday: getBday(),
+    age: parseInt(document.getElementById('f-age').value)||null,
+    color: getSelC('cpick'),
+    parent: (par==='center') ? 'center' : (parseInt(par)||'center'),
+    job: document.getElementById('f-job').value.trim(),
+    income: document.getElementById('f-income').value.trim(),
+    holiday: document.getElementById('f-holiday').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    from: document.getElementById('f-from').value.trim(),
+    living: document.getElementById('f-liv').value||'',
+    family: document.getElementById('f-fam').value.trim(),
+    met: document.getElementById('f-met').value.trim(),
+    hobby: document.getElementById('f-hob').value.trim(),
+    common: document.getElementById('f-com').value.trim(),
+    products: getSelP(),
+    gpv: pvNum(document.getElementById('f-gpv').value),
+    pv: pvNum(document.getElementById('f-pv').value),
+    tpv: pvNum(document.getElementById('f-tpv').value),
+    expect: expectMode,
+    lastMet: document.getElementById('f-last').value,
+    nextApt: document.getElementById('f-next').value,
+    nextNote: document.getElementById('f-next-note').value.trim(),
+    memo: document.getElementById('f-memo').value.trim(),
+    reminder: getReminder()
+  };
+  var hiddenEid = document.getElementById('eid');
+  var eid = hiddenEid ? hiddenEid.value : '';
+  var pp = curPage().people;
+  if (eid) {
+    var idx = pp.findIndex(function(p){ return String(p.id)===String(eid); });
+    if (idx !== -1) pp[idx] = Object.assign({}, pp[idx], data);
+  } else {
+    data.id = nextId++;
+    pp.push(data);
+  }
+  closeAdd(); renderAll(); saveData();
+  notif(eid ? '更新しました' : '「'+name+'」を追加しました');
+}
+
+function delCur() {
+  if (!curId) { notif('削除対象が選択されていません'); return; }
+  var pp = curPage().people;
+  var p = pp.find(function(x){ return x.id===curId; }); if (!p) return;
+  var children = pp.filter(function(x){ return String(x.parent)===String(curId); });
+  var sub = children.length>0 ? 'この人の直下'+children.length+'人は上位者に繰り上がります。' : '';
+  customConfirm('「'+p.name+'」を削除', sub+'削除しますか？', function() {
+    saveUndoSnapshot();
+    var newParent = p.parent;
+    pp.forEach(function(x){ if (String(x.parent)===String(curId)) x.parent=newParent; });
+    curPage().people = pp.filter(function(x){ return x.id!==curId; });
+    closePop(); renderAll(); saveData();
+    notif('「'+p.name+'」を削除しました');
+  });
+}
+
+// ══════ ページ管理 ══════
+function addPage() {
+  var name = '新しいマップ' + nextPageId;
+  var newPage = { id: nextPageId, name: name, centerName: 'センター', centerCI: 0, theme: '', mapMemo: '', showTheme: true, showMemo: true, people: [], settings: null, nodePositions: {} };
+  pages.push(newPage);
+  curPageId = nextPageId;
+  nextPageId++;
+  renderAll(); saveData();
+  notif('「'+name+'」を追加しました');
+}
+function deleteCurrentPage() {
+  if (pages.length<=1) { notif('最後のマップは削除できません'); return; }
+  var pg = curPage();
+  customConfirm('「'+pg.name+'」を削除', 'マップとすべての人物データが削除されます。', function() {
+    pages = pages.filter(function(p){ return p.id!==curPageId; });
+    curPageId = pages[0].id;
+    renderAll(); saveData();
+    notif('マップを削除しました');
+  });
+}
+function copyCurrentPage() {
+  var pg = curPage();
+  var copy = JSON.parse(JSON.stringify(pg));
+  copy.id = nextPageId++;
+  copy.name = pg.name+'のコピー';
+  pages.push(copy);
+  curPageId = copy.id;
+  renderAll(); saveData();
+  notif('「'+copy.name+'」を作成しました');
+}
+
+// ══════ 設定 ══════
+function openSettings() {
+  var pg = curPage();
+  document.getElementById('set-cname').value = pg.centerName||'センター';
+  buildCpick('cen-cpick', true); setSelC('cen-cpick', pg.centerCI||0);
+  document.getElementById('set-center-goal').value = CENTER_GOAL ? pvStr(CENTER_GOAL) : '';
+  document.getElementById('set-self-pv').value = CENTER_SELF_PV ? pvStr(CENTER_SELF_PV) : '';
+  document.getElementById('set-gpv-lbl').value = GPV_LBL||'';
+  document.getElementById('set-pv-lbl').value = PV_LBL||'';
+  document.getElementById('set-tpv-lbl').value = TPV_LBL||'';
+  var puEl=document.getElementById('set-pv-unit'); if(puEl)puEl.value=PV_UNIT||'円';
+  var tp1=document.getElementById('set-type-prospect'); if(tp1)tp1.value=TYPE_NAMES.prospect||'見込み';
+  var tp2=document.getElementById('set-type-abo'); if(tp2)tp2.value=TYPE_NAMES.ABO||'メンバー';
+  var tp3=document.getElementById('set-type-pc'); if(tp3)tp3.value=TYPE_NAMES.PC||'VIPメンバー';
+  var wm1=document.getElementById('set-warn-m1'); if(wm1)wm1.value=contactWarnM1;
+  var wm2=document.getElementById('set-warn-m2'); if(wm2)wm2.value=contactWarnM2;
+  renderMilestoneEditor();
+  document.getElementById('set-ov').classList.add('open');
+}
+function closeSettings() { document.getElementById('set-ov').classList.remove('open'); }
+function saveSettings() {
+  var pg = curPage();
+  pg.centerName = document.getElementById('set-cname').value.trim()||'センター';
+  pg.centerCI = getSelC('cen-cpick');
+  CENTER_GOAL = pvNum(document.getElementById('set-center-goal').value);
+  CENTER_SELF_PV = pvNum(document.getElementById('set-self-pv').value);
+  GPV_LBL = document.getElementById('set-gpv-lbl').value.trim();
+  PV_LBL = document.getElementById('set-pv-lbl').value.trim();
+  TPV_LBL = document.getElementById('set-tpv-lbl').value.trim();
+  var puEl=document.getElementById('set-pv-unit'); if(puEl)PV_UNIT=puEl.value.trim()||'円';
+  var tp1=document.getElementById('set-type-prospect'); if(tp1)TYPE_NAMES.prospect=tp1.value||'見込み';
+  var tp2=document.getElementById('set-type-abo'); if(tp2)TYPE_NAMES.ABO=tp2.value||'メンバー';
+  var tp3=document.getElementById('set-type-pc'); if(tp3)TYPE_NAMES.PC=tp3.value||'VIPメンバー';
+  var wm1=document.getElementById('set-warn-m1'); if(wm1)contactWarnM1=parseInt(wm1.value)||7;
+  var wm2=document.getElementById('set-warn-m2'); if(wm2)contactWarnM2=parseInt(wm2.value)||14;
+  closeSettings(); renderAll(); saveData();
+  notif('設定を保存しました');
+}
+function openStats() { document.getElementById('stats-ov').classList.add('open'); }
+function closeStats() { document.getElementById('stats-ov').classList.remove('open'); }
+function exportCSV() { notif('次回実装予定'); }
+function copyPersonToPage() { notif('次回実装予定'); }
+function closeCopyModal() { document.getElementById('copy-ov').classList.remove('open'); }
+function openShareModal() { document.getElementById('share-ov').classList.add('open'); updateShareLink(); }
+function closeShareModal() { document.getElementById('share-ov').classList.remove('open'); }
+function updateShareLink() {
+  var sel=document.getElementById('share-page-sel'); var pageId=sel?sel.value:'';
+  var link=window.location.origin+window.location.pathname+'?owner='+(currentUser?currentUser.uid:'')+'&page='+pageId;
+  var inp=document.getElementById('share-link-input'); if(inp)inp.value=link;
+}
+function copyShareLink() { var inp=document.getElementById('share-link-input'); if(inp){navigator.clipboard.writeText(inp.value).then(function(){notif('コピーしました！');});} }
+function inviteUser() { notif('次回実装予定'); }
+function loadShareMembers() {}
+function loadSharingPages() {}
+function approveShare(docId, role) {}
+function rejectShare(docId) {}
+function removeInvite(docId) {}
+function updMapOverlays() {}
+function syncThemeMemo() {}
+function renderContactRemind() {}
+function undoLastAction() { notif('次回実装予定'); }
+// setExpect・updExpectResultは上部で実装済み
+function updGoalPreview() {}
+function updSetGoalPreview() {
+  var el = document.getElementById('set-goal-preview');
+  if (!el) return;
+  var goal = pvNum(document.getElementById('set-center-goal').value);
+  if (!goal) { el.style.display='none'; return; }
+  var allP = curPeople();
+  var totPV = allP.reduce(function(s,p){ return s+(p.pv||0); },0)+(CENTER_SELF_PV||0);
+  var eRc = {A:0.8,B:0.5,C:0.1};
+  var totMPV = allP.reduce(function(s,p){ return s+(p.expect?Math.round((p.tpv||0)*(eRc[p.expect]||0)):(p.tpv||0)); },0);
+  var comb = totPV + totMPV;
+  var diff = comb - goal;
+  var achieved = diff >= 0;
+  el.style.display = 'block';
+  el.style.background = achieved ? '#e8f5e9' : '#fff3e0';
+  el.style.color = achieved ? '#2e7d32' : '#e65100';
+  el.innerHTML = '現状+見込み合算: ' + pvStr(comb) + ' / 目標: ' + pvStr(goal)
+    + ' → ' + (achieved ? '達成 +' + pvStr(diff) : 'あと ' + pvStr(-diff)) + ' PV';
+}
+function openMilestonePopup() {
+  var allP = curPeople();
+  var totPV = allP.reduce(function(s,p){ return s+(p.pv||0); },0)+(CENTER_SELF_PV||0);
+  var today = new Date();
+  var todayD = today.getDate();
+  var todayM = today.getMonth();
+  var todayY = today.getFullYear();
+  var sorted = milestones.slice().sort(function(a,b){
+    var da = a.day===0?32:a.day; var db = b.day===0?32:b.day; return da-db;
+  });
+  var next = null;
+  for (var i=0; i<sorted.length; i++) {
+    var d = sorted[i].day===0?new Date(todayY,todayM+1,0).getDate():sorted[i].day;
+    if (d>=todayD) { next={day:d,pv:sorted[i].pv,orig:sorted[i].day}; break; }
+  }
+  if (!next && sorted.length>0) {
+    var m0=sorted[0]; var d0=m0.day===0?new Date(todayY,todayM+2,0).getDate():m0.day;
+    next={day:d0,pv:m0.pv,orig:m0.day,nextMonth:true};
+  }
+  var html='';
+  if (!milestones.length) {
+    html='<p style="color:var(--muted);text-align:center;padding:20px 0">マイルストーンが設定されていません</p>';
+  } else if (next) {
+    var targetDate=new Date(todayY,todayM+(next.nextMonth?1:0),next.day);
+    var diffDays=Math.ceil((targetDate-new Date(todayY,todayM,todayD))/(1000*60*60*24));
+    var pct=next.pv>0?Math.min(Math.round(totPV/next.pv*100),100):100;
+    var over=totPV-next.pv;
+    var achieved=totPV>=next.pv;
+    var dayLbl=next.orig===0?'月末':next.day+'日';
+
+    // ヘッダー
+    html+='<div style="text-align:center;margin-bottom:16px">';
+    html+='<div style="font-size:32px;margin-bottom:4px">🎉</div>';
+    html+='<div style="font-size:13px;color:var(--muted)">次のマイルストーン</div>';
+    html+='<div style="font-size:22px;font-weight:700;margin-top:4px">'+dayLbl+'まであと <span style="color:var(--acc);font-size:28px">'+diffDays+'</span> 日</div>';
+    html+='</div>';
+
+    // プログレスバー
+    html+='<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:12px">';
+    html+='<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">';
+    html+='<span>現在 '+pvStr(totPV)+' PV</span><span>目標 '+pvStr(next.pv)+' PV</span></div>';
+    html+='<div style="background:var(--bdr);border-radius:8px;height:14px;overflow:hidden">';
+    html+='<div style="background:var(--acc);height:100%;width:'+pct+'%;border-radius:8px;transition:width .3s"></div></div>';
+    html+='<div style="text-align:right;font-size:13px;color:var(--acc);margin-top:4px;font-weight:700">'+pct+'%</div>';
+    html+='</div>';
+
+    // 達成カード
+    if (achieved) {
+      html+='<div style="background:#e8f5e9;border-radius:12px;padding:14px;text-align:center;margin-bottom:12px">';
+      html+='<div style="font-size:20px;font-weight:700;color:#2e7d32">✅ 達成！</div>';
+      html+='<div style="font-size:13px;color:#388e3c;margin-top:4px">目標 '+pvStr(next.pv)+' PV</div>';
+      html+='</div>';
+      // オーバー分カード
+      html+='<div style="background:#f1f8e9;border-radius:12px;padding:14px;text-align:center">';
+      html+='<div style="font-size:13px;color:#558b2f;margin-bottom:6px">オーバー分</div>';
+      html+='<div style="font-size:28px;font-weight:700;color:#33691e">+'+pvStr(over)+'</div>';
+      html+='<div style="font-size:12px;color:#558b2f;margin-top:2px">PV</div>';
+      html+='</div>';
+    }
+  }
+  document.getElementById('milestone-popup-content').innerHTML=html;
+  document.getElementById('milestone-popup').style.display='flex';
+}
+function closeMilestonePopup() { document.getElementById('milestone-popup').style.display='none'; }
+function renderMilestoneEditor() {
+  var el = document.getElementById('milestone-editor');
+  if (!el) return;
+  el.innerHTML = milestones.map(function(m, i) {
+    return '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">'
+      + '<input class="minp" type="number" min="0" max="31" placeholder="日(0=月末)" value="' + m.day + '" style="width:90px" onchange="milestones[' + i + '].day=parseInt(this.value)||0">'
+      + '<input class="minp" type="text" inputmode="numeric" placeholder="売上目標" value="' + pvStr(m.pv) + '" style="flex:1" oninput="fmtPV(this)" onchange="milestones[' + i + '].pv=pvNum(this.value)">'
+      + '<button class="hbtn danger" style="padding:4px 8px;font-size:12px" onclick="removeMilestone(' + i + ')">×</button>'
+      + '</div>';
+  }).join('');
+}
+function addMilestone() {
+  milestones.push({day:0, pv:0});
+  renderMilestoneEditor();
+}
+function removeMilestone(i) {
+  milestones.splice(i, 1);
+  renderMilestoneEditor();
+}
+function addSalesLevel() {}
+
+// ══════ 動物占い ══════
+var YM={1960:[24,55,24,55,25,56,26,57,28,58,29,59],1961:[30,1,29,0,30,1,31,2,33,3,34,4],1962:[35,6,34,5,35,6,36,7,38,8,39,9],1963:[40,11,39,10,40,11,41,12,43,13,44,14],1964:[45,16,45,16,46,17,47,18,49,19,0,20],1965:[51,22,50,21,51,22,52,23,54,24,55,25],1966:[56,27,55,26,56,27,57,28,59,29,0,30],1967:[1,32,0,31,1,32,2,33,4,34,11,35],1968:[6,37,6,37,7,38,8,39,10,40,16,41],1969:[12,43,11,42,12,43,13,44,15,45,21,46],1970:[17,48,16,47,17,48,18,49,20,50,21,51],1971:[22,53,21,52,22,53,23,54,25,55,26,56],1972:[27,58,27,58,28,59,29,0,31,1,32,2],1973:[33,4,32,3,33,4,34,5,36,6,37,7],1974:[38,9,37,8,38,9,39,10,41,11,42,12],1975:[43,14,42,13,43,14,44,15,46,16,47,17],1976:[48,19,48,19,49,20,50,21,52,22,53,23],1977:[54,25,53,24,54,25,55,26,57,27,58,28],1978:[59,30,58,29,59,30,0,31,2,32,3,33],1979:[4,35,3,34,4,35,5,36,7,37,8,38],1980:[9,40,9,40,10,41,11,42,13,43,14,44],1981:[15,46,14,45,15,46,16,47,18,48,19,49],1982:[20,51,19,50,20,51,21,52,23,53,24,54],1983:[25,56,24,55,25,56,26,57,28,58,29,59],1984:[30,1,30,1,31,2,32,3,34,4,35,5],1985:[36,7,35,6,36,7,37,8,39,9,40,10],1986:[41,12,40,11,41,12,42,13,44,14,45,15],1987:[46,17,45,16,46,17,47,18,49,19,50,20],1988:[51,22,51,22,52,23,53,24,55,25,56,26],1989:[57,28,56,27,57,28,58,29,0,30,1,31],1990:[2,33,1,32,2,33,3,34,5,35,6,36],1991:[7,38,6,37,7,38,8,39,10,40,11,41],1992:[12,43,12,43,13,44,14,45,16,46,17,47],1993:[18,49,17,48,18,49,19,50,21,51,22,52],1994:[23,54,22,53,23,54,24,55,26,56,27,57],1995:[28,59,27,58,28,59,29,0,31,1,32,2],1996:[33,4,33,4,34,5,35,6,37,7,38,8],1997:[39,10,38,9,39,10,40,11,42,12,43,13],1998:[44,15,43,14,44,15,45,16,47,17,48,18],1999:[49,20,48,19,49,20,50,21,52,22,53,23],2000:[54,25,54,25,55,26,56,27,58,28,59,29],2001:[0,31,59,30,0,31,1,32,3,33,4,34],2002:[5,36,4,35,5,36,6,37,8,38,9,39],2003:[10,41,9,40,10,41,11,42,13,43,14,44],2004:[15,46,15,46,16,47,17,48,19,49,20,50],2005:[21,52,20,51,21,52,22,53,24,54,25,55],2006:[26,57,25,56,26,57,27,58,29,59,30,60],2007:[31,2,30,1,31,2,32,3,34,4,35,5],2008:[36,7,36,7,37,8,38,9,40,10,41,11],2009:[42,13,41,12,42,13,43,14,45,15,46,16],2010:[47,18,46,17,47,18,48,19,50,20,51,21],2011:[52,23,51,22,52,23,53,24,55,25,56,26],2012:[57,28,57,28,58,29,59,30,1,31,2,32],2013:[3,34,2,33,3,34,4,35,6,36,7,37],2014:[8,39,7,38,8,39,9,40,11,41,12,42],2015:[13,44,12,43,13,44,14,45,16,46,17,47],2016:[18,49,18,49,19,50,20,51,22,52,23,53],2017:[24,55,23,54,24,55,25,56,27,57,28,58],2018:[29,0,28,59,29,0,30,1,32,2,33,3],2019:[34,5,33,4,34,5,35,6,37,7,38,8],2020:[39,10,39,10,40,11,41,12,43,13,44,14],2021:[45,16,44,15,45,16,46,17,48,18,49,19],2022:[50,21,49,20,50,21,51,22,53,23,54,24],2023:[55,26,54,25,55,26,56,27,58,28,59,29],2024:[0,31,0,31,1,32,2,33,4,34,5,35],2025:[6,37,5,36,6,37,7,38,9,39,10,40]};
+var N2A={1:'チーター',2:'たぬき',3:'猿',4:'子守熊',5:'黒ひょう',6:'虎',7:'チーター',8:'たぬき',9:'猿',10:'子守熊',11:'こじか',12:'ゾウ',13:'狼',14:'ひつじ',15:'猿',16:'子守熊',17:'こじか',18:'ゾウ',19:'狼',20:'ひつじ',21:'ペガサス',22:'ペガサス',23:'ひつじ',24:'狼',25:'狼',26:'ひつじ',27:'ペガサス',28:'ペガサス',29:'ひつじ',30:'狼',31:'ゾウ',32:'こじか',33:'子守熊',34:'猿',35:'ひつじ',36:'狼',37:'ゾウ',38:'こじか',39:'子守熊',40:'猿',41:'たぬき',42:'チーター',43:'虎',44:'黒ひょう',45:'子守熊',46:'猿',47:'たぬき',48:'チーター',49:'虎',50:'黒ひょう',51:'ライオン',52:'ライオン',53:'黒ひょう',54:'虎',55:'虎',56:'黒ひょう',57:'ライオン',58:'ライオン',59:'ひつじ',60:'狼'};
+var AINFO={'狼':{e:'🐺'},'こじか':{e:'🦌'},'猿':{e:'🐒'},'チーター':{e:'🐆'},'黒ひょう':{e:'🐈\u200d⬛'},'ライオン':{e:'🦁'},'虎':{e:'🐯'},'たぬき':{e:'🦝'},'子守熊':{e:'🐨'},'ゾウ':{e:'🐘'},'ひつじ':{e:'🐏'},'ペガサス':{e:'🦄'},'ゴリラ':{e:'🦍'}};
+var ANIMAL_LIST=['狼','こじか','猿','チーター','黒ひょう','ライオン','虎','たぬき','子守熊','ゾウ','ひつじ','ペガサス','ゴリラ'];
+
+// ══════ 初期化 ══════
+window.addEventListener('load', function() {
+  buildBdaySelects();
+  initPanZoom();
+  renderMap();
+});
+var nodePosOverride = {};
+
+// ══════ 状態変数 ══════
+var PASTELS = [
+  {bg:'#FFC0CB',sk:'#D46880',tx:'#6a2535'},
+  {bg:'#FFDAB9',sk:'#D4845A',tx:'#6a3820'},
+  {bg:'#FFFACD',sk:'#C8B84A',tx:'#524800'},
+  {bg:'#BFFFD9',sk:'#5BBF8E',tx:'#2a5a42'},
+  {bg:'#B0E0E6',sk:'#5AAABF',tx:'#2a5060'},
+  {bg:'#E6E6FA',sk:'#9B8EC4',tx:'#4a4050'},
+  {bg:'#CCCCFF',sk:'#7070CC',tx:'#2a2a7a'},
+  {bg:'#B2D4B0',sk:'#5A9456',tx:'#1e4a1a'},
+  {bg:'#F5F5F7',sk:'#A0A8B8',tx:'#3a3f50'},
+  {bg:'#FFDDF4',sk:'#F0B0CC',tx:'#6a2020'},
+];
+var CENTER_C = [
+  {bg:'#A0A8B8',tx:'#ffffff'},
+  {bg:'#5AAABF',tx:'#ffffff'},
+  {bg:'#5BBF8E',tx:'#ffffff'},
+  {bg:'#F0B0CC',tx:'#ffffff'},
+  {bg:'#9B8EC4',tx:'#ffffff'},
+  {bg:'#C8B84A',tx:'#ffffff'},
+  {bg:'#D4845A',tx:'#ffffff'},
+  {bg:'#D46880',tx:'#ffffff'},
+  {bg:'#7070CC',tx:'#ffffff'},
+  {bg:'#5A9456',tx:'#ffffff'},
+];
+
+// 設定
+var PRODUCTS = ['愛用商品1','愛用商品2','愛用商品3','愛用商品4','愛用商品5','愛用商品6','愛用商品7','愛用商品8','愛用商品9','愛用商品10','','','','','','','','','',''];
+var PROD_LBL = '';
+var GPV_LBL = '';
+var PV_LBL = '';
+var TPV_LBL = '';
+var PV_UNIT = '円';
+var CENTER_GOAL = 2000000;
+var CENTER_SELF_PV = 80000;
+var TYPE_NAMES = {prospect:'見込み', ABO:'メンバー', PC:'VIPメンバー'};
+var SALES_LEVELS = [
+  {minPV:1500000, label:'21%'},
+  {minPV:1000000, label:'18%'},
+  {minPV:600000,  label:'15%'},
+  {minPV:360000,  label:'12%'},
+  {minPV:180000,  label:'9%'},
+  {minPV:90000,   label:'6%'},
+  {minPV:30000,   label:'3%'},
+  {minPV:0,       label:'0%'},
+];
+var milestones = [{day:12,pv:600000},{day:21,pv:1000000},{day:0,pv:1500000}];
+var dispMilestone = false;
+var contactWarnM1 = 7;
+var contactWarnM2 = 14;
+var contactWarnOn = true;
+
+// ページ管理
+var pages = [{id:1, name:'マイマップ', centerName:'センター', centerCI:0, theme:'', mapMemo:'', showTheme:true, showMemo:true, people:[], settings:null}];
+var curPageId = 1;
+var nextPageId = 2;
+var nextId = 100;
+
+// 表示状態
+var curId = null;
+var flt = {name:'', type:'', rel:'', products:[], gender:''};
+var disp = {animal:false, pv:false, mpv:false, goal:false, rel:false, theme:false, mapMemo:false, last:false, next:false};
+var sc = 1, ox = 0, oy = 0;
+var ageFilter = '';
+var expectMode = '';
+var contactFilter = '';
+
+// Firestore リスナー管理（ページ別）
+var _pageListeners = {}; // { pageId: unsubscribe }
+var _settingsUnsubscribe = null;
+
+// ══════ ページ操作ヘルパー ══════
+function curPage() {
+  return pages.find(function(p){ return String(p.id) === String(curPageId); }) || pages[0];
+}
+function curPeople() {
+  var pp = curPage().people;
+  var seen = {};
+  return pp.filter(function(p){
+    var k = String(p.id);
+    if (seen[k]) return false;
+    seen[k] = true;
+    return true;
+  });
+}
+
+// ══════ Firestore 新設計（v26）══════
+// コレクション構造：
+//   /pmas_settings/{uid}  → 設定・ページ一覧
+//   /pmas_maps/{uid}_{pageId} → ページ別ノードデータ
+
+function startFirestoreSync(uid) {
+  // 既存リスナーを全解除
+  _stopAllListeners();
+
+  // 1. 設定を監視
+  _startSettingsSync(uid);
+}
+
+function _stopAllListeners() {
+  if (_settingsUnsubscribe) { _settingsUnsubscribe(); _settingsUnsubscribe = null; }
+  Object.keys(_pageListeners).forEach(function(pid) {
+    if (_pageListeners[pid]) _pageListeners[pid]();
+  });
+  _pageListeners = {};
+}
+
+// 設定の監視（pmas_settings/{uid}）
+function _startSettingsSync(uid) {
+  var ref = fbDb.collection('pmas_settings').doc(uid);
+  _settingsUnsubscribe = ref.onSnapshot(function(doc) {
+    if (!doc.exists) {
+      // 初回：デフォルト設定を書き込む
+      _saveSettings(uid);
+      return;
+    }
+    var d = doc.data();
+    if (d.CENTER_GOAL !== undefined) CENTER_GOAL = d.CENTER_GOAL;
+    if (d.CENTER_SELF_PV !== undefined) CENTER_SELF_PV = d.CENTER_SELF_PV;
+    if (d.PRODUCTS) PRODUCTS = d.PRODUCTS;
+    if (d.PROD_LBL !== undefined) PROD_LBL = d.PROD_LBL;
+    if (d.PV_LBL !== undefined) PV_LBL = d.PV_LBL;
+    if (d.TPV_LBL !== undefined) TPV_LBL = d.TPV_LBL;
+    if (d.GPV_LBL !== undefined) GPV_LBL = d.GPV_LBL;
+    if (d.PV_UNIT !== undefined) PV_UNIT = d.PV_UNIT;
+    if (d.TYPE_NAMES) TYPE_NAMES = d.TYPE_NAMES;
+    if (d.SALES_LEVELS) SALES_LEVELS = d.SALES_LEVELS;
+    if (d.milestones) milestones = d.milestones;
+    if (d.dispMilestone !== undefined) dispMilestone = d.dispMilestone;
+    if (d.contactWarnM1 !== undefined) contactWarnM1 = d.contactWarnM1;
+    if (d.contactWarnM2 !== undefined) contactWarnM2 = d.contactWarnM2;
+    if (d.nextId !== undefined) nextId = d.nextId;
+    if (d.nextPageId !== undefined) nextPageId = d.nextPageId;
+    if (d.curPageId !== undefined) curPageId = parseInt(d.curPageId) || 1;
+
+    // ページ一覧（ページメタ情報のみ）
+    var pageList = d.pageList || [{id:1, name:'マイマップ'}];
+    _syncPageListeners(uid, pageList);
+
+  }, function(e){ console.warn('settings onSnapshot error:', e); });
+}
+
+// ページ一覧に合わせてリスナーを管理
+function _syncPageListeners(uid, pageList) {
+  var newIds = pageList.map(function(p){ return String(p.id); });
+
+  // 不要なリスナーを解除
+  Object.keys(_pageListeners).forEach(function(pid) {
+    if (newIds.indexOf(pid) === -1) {
+      if (_pageListeners[pid]) _pageListeners[pid]();
+      delete _pageListeners[pid];
+      // pagesからも削除
+      pages = pages.filter(function(p){ return String(p.id) !== pid; });
+    }
+  });
+
+  // 新しいページのリスナーを追加
+  pageList.forEach(function(meta) {
+    var pid = String(meta.id);
+    if (!_pageListeners[pid]) {
+      _startPageSync(uid, meta);
+    }
+  });
+}
+
+// ページデータの監視（pmas_maps/{uid}_{pageId}）
+function _startPageSync(uid, meta) {
+  var pid = String(meta.id);
+  var docId = uid + '_' + pid;
+  var ref = fbDb.collection('pmas_maps').doc(docId);
+
+  _pageListeners[pid] = ref.onSnapshot(function(doc) {
+    // 保存直後3秒以内のonSnapshotは自分の書き込みなので無視
+    var lastSave = window._lastSaveTime && window._lastSaveTime[pid];
+    if (lastSave && Date.now() - lastSave < 3000) return;
+
+    var existingIdx = pages.findIndex(function(p){ return String(p.id) === pid; });
+
+    if (!doc.exists) {
+      var newPage = {
+        id: parseInt(pid) || pid,
+        name: meta.name || 'マイマップ',
+        centerName: meta.centerName || 'センター',
+        centerCI: meta.centerCI || 0,
+        theme: '', mapMemo: '', showTheme: true, showMemo: true,
+        people: [], settings: null, nodePositions: {}
+      };
+      if (existingIdx === -1) pages.push(newPage);
+      else pages[existingIdx] = newPage;
+      _savePageToFirestore(uid, parseInt(pid) || pid);
+      renderAll();
+      return;
+    }
+
+    var d = doc.data();
+    var page = {
+      id: parseInt(pid) || pid,
+      name: d.pageName || meta.name || 'マイマップ',
+      centerName: d.centerName || 'センター',
+      centerCI: d.centerCI || 0,
+      theme: d.theme || '',
+      mapMemo: d.mapMemo || '',
+      showTheme: d.showTheme !== false,
+      showMemo: d.showMemo !== false,
+      people: d.nodes || [],
+      settings: d.settings || null,
+      nodePositions: d.nodePositions || {}
+    };
+
+    if (existingIdx === -1) pages.push(page);
+    else pages[existingIdx] = page;
+
+    if (!pages.some(function(p){ return String(p.id) === String(curPageId); })) {
+      curPageId = pages[0] ? pages[0].id : 1;
+    }
+
+    renderAll();
+    applyRoleBadge();
+
+  }, function(e){ console.warn('page onSnapshot error:', e); });
+}
+
+// ══════ Firestore 書き込み ══════
+
+// 設定を保存（pmas_settings/{uid}）
+function _saveSettings(uid) {
+  if (!currentUser || offlineMode) return;
+  if (currentRole === 'viewer') return;
+  var ref = fbDb.collection('pmas_settings').doc(uid);
+  ref.set({
+    CENTER_GOAL: CENTER_GOAL,
+    CENTER_SELF_PV: CENTER_SELF_PV,
+    PRODUCTS: PRODUCTS,
+    PROD_LBL: PROD_LBL,
+    PV_LBL: PV_LBL,
+    TPV_LBL: TPV_LBL,
+    GPV_LBL: GPV_LBL,
+    PV_UNIT: PV_UNIT,
+    TYPE_NAMES: TYPE_NAMES,
+    SALES_LEVELS: SALES_LEVELS,
+    milestones: milestones,
+    dispMilestone: dispMilestone,
+    contactWarnM1: contactWarnM1,
+    contactWarnM2: contactWarnM2,
+    nextId: nextId,
+    nextPageId: nextPageId,
+    curPageId: curPageId,
+    pageList: pages.map(function(p){ return {id:p.id, name:p.name}; }),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, {merge: true}).catch(function(e){ console.warn('saveSettings error:', e); });
+}
+
+// ページデータを保存（pmas_maps/{uid}_{pageId}）
+// ページデータを保存（pmas_maps/{uid}_{pageId}）
+function _savePageToFirestore(uid, pageId) {
+  if (!currentUser || offlineMode) return;
+  if (currentRole === 'viewer') return;
+  var page = pages.find(function(p){ return String(p.id) === String(pageId); });
+  if (!page) return;
+  var docId = uid + '_' + String(pageId);
+  var ref = fbDb.collection('pmas_maps').doc(docId);
+  var saveTime = Date.now();
+  if (!window._lastSaveTime) window._lastSaveTime = {};
+  window._lastSaveTime[String(pageId)] = saveTime;
+  ref.set({
+    ownerUid: uid,
+    pageId: pageId,
+    pageName: page.name,
+    centerName: page.centerName || 'センター',
+    centerCI: page.centerCI || 0,
+    theme: page.theme || '',
+    mapMemo: page.mapMemo || '',
+    showTheme: page.showTheme !== false,
+    showMemo: page.showMemo !== false,
+    nodes: page.people || [],
+    nodePositions: page.nodePositions || {},
+    settings: page.settings || null,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, {merge: true}).catch(function(e){
+    console.warn('savePage error:', e);
+  });
+}
+
+// 全データ保存（設定＋現在ページ）
+function saveData() {
+  if (!currentUser || offlineMode) return;
+  var uid = currentUser.uid;
+  _saveSettings(uid);
+  _savePageToFirestore(uid, curPageId);
+}
+
+// ══════ Firebase Auth 状態監視 ══════
+fbAuth.onAuthStateChanged(function(user) {
+  if (user) {
+    currentUser = user;
+    checkDisplayName(user);
+  } else {
+    currentUser = null;
+    if (!offlineMode) showLoginScreen();
+  }
+});
+</script>
+</body>
+</html>
