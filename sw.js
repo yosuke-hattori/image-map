@@ -1,4 +1,4 @@
-var CACHE_NAME = 'image-map-v2';
+var CACHE_NAME = 'image-map-v3';
 var CACHE_URLS = [
   '/image-map/pmas_v26_firebase.html'
 ];
